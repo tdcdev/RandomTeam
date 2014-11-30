@@ -1,0 +1,12 @@
+#ifndef _VERSION_H_
+#define _VERSION_H_
+
+
+
+#define VERSION_MAJOR @VERSION_MAJOR@
+#define VERSION_MINOR @VERSION_MINOR@
+#define BUILD_TYPE "@BUILD_TYPE@"
+
+
+
+#endif

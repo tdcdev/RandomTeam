@@ -137,3 +137,10 @@ EdgeInfos* SimulationGraph::addEdge(const std::string& n1, const std::string& n2
 
     return &m_graph[edge];
 }
+
+
+
+float SimulationGraph::fitness() const
+{
+    return 0.f;
+}

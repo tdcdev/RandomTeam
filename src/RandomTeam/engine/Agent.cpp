@@ -172,6 +172,29 @@ void Agent::init()
 
 
 
+void Agent::actionGoto(const std::string& param)
+{
+    m_order = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>";
+    m_order += "<message type=\"action\">";
+    m_order += "<action type=\"goto\" id=\"" + m_reqId + "\" ";
+    m_order += "param=\"" + param + "\"/>";
+    m_order += "</message>";
+    m_order += '\0';
+}
+
+
+
+void Agent::actionRecharge()
+{
+    m_order = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>";
+    m_order += "<message type=\"action\">";
+    m_order += "<action type=\"recharge\" id=\"" + m_reqId + "\"/>";
+    m_order += "</message>";
+    m_order += '\0';
+}
+
+
+
 int Agent::remainingTime() const
 {
     long long int diff = m_reqDeadline - Clock::now();
@@ -453,6 +476,8 @@ void Agent::requestactionSelf(tinyxml2::XMLElement* perception)
             m_strength = std::stoi(values[9]);
             m_visRange = std::stoi(values[10]);
             m_zoneScore = std::stoi(values[11]);
+
+            debug("Agent " + m_id + ": last " + values[0] + " " + values[2]);
         }
     }
 }

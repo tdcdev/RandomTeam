@@ -83,6 +83,8 @@ class Agent
         int visRange() const;
         int zoneScore() const;
         void init();
+        void actionGoto(const std::string& param);
+        void actionRecharge();
         void read(const std::string& msg);
         int remainingTime() const;
 

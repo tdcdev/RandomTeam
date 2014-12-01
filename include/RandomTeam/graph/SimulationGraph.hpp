@@ -52,6 +52,7 @@ class SimulationGraph
         EdgeInfos* edge(const std::string& n1, const std::string& n2);
         VertexInfos* addVertex(const std::string& id);
         EdgeInfos* addEdge(const std::string& n1, const std::string& n2);
+        float fitness() const;
 
     private:
 

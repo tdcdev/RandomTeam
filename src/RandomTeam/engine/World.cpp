@@ -268,12 +268,15 @@ int World::remainingTime() const
 
 void World::think()
 {
-    Clock clock;
-
     if (m_started)
     {
+        std::vector< std::shared_ptr<Agent> >::iterator it = m_agents.begin();
+
+        while (it != m_agents.end())
+        {
+            (*it)->actionRecharge();
+            it++;
+        }
 
     }
-
-    clock.elapsedTime();
 }

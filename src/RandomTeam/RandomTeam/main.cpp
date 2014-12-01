@@ -138,7 +138,7 @@ int main(int argc, char** argv)
 
         world.think();
 
-        if (write && world.remainingTime() > 0 && world.remainingTime() < 100)
+        if (write && world.remainingTime() > 0 && world.remainingTime() < 150)
         {
             write = false;
             serverInterface.writeClients();

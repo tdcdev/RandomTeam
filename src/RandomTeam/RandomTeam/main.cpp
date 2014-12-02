@@ -133,7 +133,9 @@ int main(int argc, char** argv)
         if (world.remainingTime() <= 0)
         {
             write = true;
+            world.clear();
             serverInterface.readClients(1300);
+            world.generateAllPlayouts();
         }
 
         world.think();

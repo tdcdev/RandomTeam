@@ -32,95 +32,71 @@
 
 
 
-#include <algorithm>
 #include <string>
-
-
-
-namespace tinyxml2
-{
-
-    class XMLElement;
-
-}
-
-
-
-class World;
 
 
 
 class Agent
 {
 
-    enum Role
-    {
-        NONE,
-        EXPLORER,
-        REPAIRER,
-        SABOTEUR,
-        SENTINEL,
-        INSPECTOR
-    };
-
     public:
 
-        Agent(World& world, const std::string& id, const std::string& password);
+        enum Role
+        {
+            NONE,
+            EXPLORER,
+            REPAIRER,
+            SABOTEUR,
+            SENTINEL,
+            INSPECTOR
+        };
+
+        Agent(const std::string& id);
+        Agent(const Agent& agent);
+        Agent& operator=(const Agent& agent);
         virtual ~Agent();
         const std::string& id() const;
-        const std::string& password() const;
-        const std::string& order() const;
-        bool connected() const;
-        long long int reqDeadline() const;
-        const std::string& reqId() const;
+        const std::string& team() const;
+        const std::string& position() const;
+        Agent::Role role() const;
         int energy() const;
         int health() const;
         int maxEnergy() const;
         int maxEnergyDisabled() const;
         int maxHealth() const;
-        const std::string& position() const;
         int strength() const;
         int visRange() const;
         int zoneScore() const;
-        void init();
-        void actionGoto(const std::string& param);
-        void actionRecharge();
-        void read(const std::string& msg);
+        long long int deadline() const;
         int remainingTime() const;
+        void setTeam(const std::string& team);
+        void setPosition(std::string& position);
+        void setRole(Agent::Role role);
+        void setEnergy(int energy);
+        void setHealth(int health);
+        void setMaxEnergy(int maxEnergy);
+        void setMaxEnergyDisabled(int maxEnergyDisabled);
+        void setMaxHealth(int maxHealth);
+        void setStrength(int strength);
+        void setVisRange(int visRange);
+        void setZoneScore(int zoneScore);
+        void setDeadline(long long int deadline);
 
-    private:
+    protected:
 
-        void authresponse(tinyxml2::XMLElement* message);
-        void simstart(tinyxml2::XMLElement* message);
-        void simend(tinyxml2::XMLElement* message);
-        void bye(tinyxml2::XMLElement* message);
-        void requestaction(tinyxml2::XMLElement* message);
-        void requestactionSimulation(tinyxml2::XMLElement* perception);
-        void requestactionSelf(tinyxml2::XMLElement* perception);
-        void requestactionVisibleVertices(tinyxml2::XMLElement* perception);
-        void requestactionVisibleEdges(tinyxml2::XMLElement* perception);
-        void requestactionVisibleentities(tinyxml2::XMLElement* perception);
-        void requestactionProbedVertices(tinyxml2::XMLElement* perception);
-        void requestactionSurveyedEdges(tinyxml2::XMLElement* perception);
-        void requestactionInspectedEntities(tinyxml2::XMLElement* perception);
-
-        World& m_world;
-        const std::string m_id;
-        const std::string m_password;
-        std::string m_order;
-        bool m_connected;
+        std::string m_id;
+        std::string m_team;
+        std::string m_position;
         Role m_role;
-        long long int m_reqDeadline;
-        std::string m_reqId;
         int m_energy;
         int m_health;
         int m_maxEnergy;
         int m_maxEnergyDisabled;
         int m_maxHealth;
-        std::string m_position;
         int m_strength;
         int m_visRange;
         int m_zoneScore;
+        long long int m_deadline;
 
 };
 

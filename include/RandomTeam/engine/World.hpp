@@ -32,14 +32,9 @@
 
 
 
-#include <iostream>
-#include <memory>
 #include <vector>
+#include <RandomTeam/engine/Teammate.hpp>
 #include <RandomTeam/graph/SimulationGraph.hpp>
-
-
-
-class Agent;
 
 
 
@@ -50,8 +45,8 @@ class World
 
         World();
         virtual ~World();
-        unsigned int numAgents() const;
-        std::shared_ptr<Agent> agent(unsigned int index) const;
+        unsigned int nbTeammates() const;
+        Teammate* teammate(unsigned int index);
         bool running() const;
         bool started() const;
         const std::string& simulationId() const;
@@ -59,25 +54,31 @@ class World
         int maxVertices() const;
         int maxSteps() const;
         int step() const;
+        const std::string& team() const;
+        int remainingTime() const;
         void setRunning(bool on);
         void setStep(int step);
-        void initSimulation(
-                const std::string& id,
+        void setTeam(const std::string& team);
+        void startSimulation(
+                const std::string& simulationId,
                 int maxEdges,
                 int maxVertices,
                 int maxSteps
                 );
         void endSimulation(const std::string& rank, const std::string& score);
+        void seeAgent(const Agent& agent);
         void addVertex(const std::string& id, const std::string& team);
         void addEdge(const std::string& n1, const std::string& n2);
         bool loadTeam(const std::string& file);
-        int remainingTime() const;
+        void clear();
+        void generateAllPlayouts();
         void think();
 
     private:
 
         SimulationGraph m_graph;
-        std::vector< std::shared_ptr<Agent> > m_agents;
+        std::vector<Teammate> m_teammates;
+        std::vector<Agent> m_opponents;
         bool m_running;
         bool m_started;
         std::string m_simulationId;
@@ -85,6 +86,7 @@ class World
         int m_maxVertices;
         int m_maxSteps;
         int m_step;
+        std::string m_team;
 
 };
 

@@ -28,6 +28,7 @@
 
 
 #include <RandomTeam/graph/SimulationGraph.hpp>
+#include <RandomTeam/engine/Agent.hpp>
 
 
 
@@ -136,6 +137,50 @@ EdgeInfos* SimulationGraph::addEdge(const std::string& n1, const std::string& n2
     Edge edge = boost::add_edge(m_vertices[n1], m_vertices[n2], m_graph).first;
 
     return &m_graph[edge];
+}
+
+
+
+void SimulationGraph::addTeammate(const Agent* teammate)
+{
+    VertexInfos* vertex = this->vertex(teammate->position());
+
+    if (vertex != nullptr)
+    {
+        vertex->m_teammates.push_back(teammate);
+        m_teammates.push_back(teammate);
+    }
+}
+
+
+
+void SimulationGraph::addOpponent(const Agent* opponent)
+{
+    VertexInfos* vertex = this->vertex(opponent->position());
+
+    if (vertex != nullptr)
+    {
+        vertex->m_opponents.push_back(opponent);
+        m_opponents.push_back(opponent);
+    }
+}
+
+
+
+void SimulationGraph::clear()
+{
+    std::pair<BGraph::vertex_iterator, BGraph::vertex_iterator> it;
+
+    it = boost::vertices(m_graph);
+
+    while (it.first != it.second)
+    {
+        m_graph[*it.first].clear();
+        it.first++;
+    }
+
+    m_teammates.clear();
+    m_opponents.clear();
 }
 
 

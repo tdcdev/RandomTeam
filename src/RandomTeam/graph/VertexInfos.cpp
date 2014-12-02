@@ -28,6 +28,7 @@
 
 
 #include <RandomTeam/graph/VertexInfos.hpp>
+#include <RandomTeam/engine/Agent.hpp>
 
 
 
@@ -43,6 +44,8 @@ VertexInfos::VertexInfos():
 
 
 VertexInfos::VertexInfos(const VertexInfos& infos):
+    m_teammates(infos.m_teammates),
+    m_opponents(infos.m_opponents),
     m_id(infos.m_id),
     m_value(infos.m_value),
     m_team(infos.m_team)
@@ -64,9 +67,19 @@ VertexInfos::VertexInfos(const std::string& id):
 
 VertexInfos& VertexInfos::operator=(const VertexInfos& infos)
 {
+    m_teammates = infos.m_teammates;
+    m_opponents = infos.m_opponents;
     m_id = infos.m_id;
     m_value = infos.m_value;
     m_team = infos.m_team;
 
     return *this;
+}
+
+
+
+void VertexInfos::clear()
+{
+    m_teammates.clear();
+    m_opponents.clear();
 }

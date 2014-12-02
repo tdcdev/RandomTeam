@@ -29,7 +29,7 @@
 
 #include <RandomTeam/engine/ServerInterface.hpp>
 #include <RandomTeam/engine/World.hpp>
-#include <RandomTeam/engine/Agent.hpp>
+#include <RandomTeam/engine/Teammate.hpp>
 #include <RandomTeam/engine/Clock.hpp>
 #include <RandomTeam/network/TCPNode.hpp>
 #include <RandomTeam/network/TCPClient.hpp>
@@ -64,7 +64,7 @@ bool ServerInterface::connect()
 
     m_clients.clear();
 
-    for (unsigned int i = 0; i < m_world.numAgents(); i++)
+    for (unsigned int i = 0; i < m_world.nbTeammates(); i++)
     {
         m_clients.push_back(nullptr);
     }
@@ -87,11 +87,11 @@ bool ServerInterface::connect()
         return false;
     }
 
-    for (unsigned int i = 0; i < m_world.numAgents(); i++)
+    for (unsigned int i = 0; i < m_world.nbTeammates(); i++)
     {
-        if (!m_world.agent(i)->connected())
+        if (!m_world.teammate(i)->connected())
         {
-            error("Agent " + m_world.agent(i)->id() + ": not connected");
+            error("Agent " + m_world.teammate(i)->id() + ": not connected");
             return false;
         }
     }
@@ -103,19 +103,19 @@ bool ServerInterface::connect()
 
 bool ServerInterface::connectClients()
 {
-    for (unsigned int i = 0; i < m_world.numAgents(); i++)
+    for (unsigned int i = 0; i < m_world.nbTeammates(); i++)
     {
         m_clients[i].reset(new TCPClient());
-        m_world.agent(i)->init();
+        m_world.teammate(i)->authrequest();
 
         if (!m_clients[i]->connect(m_host, m_port))
         {
-            error("Agent " + m_world.agent(i)->id() + ": connexion failure");
+            error("Agent " + m_world.teammate(i)->id() + ": connexion failure");
             return false;
         }
         else
         {
-            debug("Agent " + m_world.agent(i)->id() + ": connected");
+            debug("Agent " + m_world.teammate(i)->id() + ": connected");
         }
     }
 
@@ -127,7 +127,7 @@ bool ServerInterface::connectClients()
 bool ServerInterface::readClients(int ms)
 {
     int mask = 0;
-    unsigned int n = m_world.numAgents();
+    unsigned int n = m_world.nbTeammates();
 
     Clock clock;
 
@@ -135,13 +135,20 @@ bool ServerInterface::readClients(int ms)
     {
         for (unsigned int i = 0; i < n; i++)
         {
+            Teammate* teammate = m_world.teammate(i);
+
+            if (teammate->remainingTime() > 0)
+            {
+                mask |= 1 << i;
+            }
+
             if (((mask & (1 << i)) == 0) && m_clients[i]->read(20))
             {
                 const std::string msg = m_clients[i]->node().input();
 
                 if (msg.length() > 1)
                 {
-                    m_world.agent(i)->read(msg);
+                    teammate->read(msg);
                     mask |= 1 << i;
                 }
             }
@@ -162,18 +169,18 @@ bool ServerInterface::writeClients()
 {
     bool flag = true;
 
-    for (unsigned int i = 0; i < m_world.numAgents(); i++)
+    for (unsigned int i = 0; i < m_world.nbTeammates(); i++)
     {
-        m_clients[i]->setNodeMsgToSend(m_world.agent(i)->order());
+        m_clients[i]->setNodeMsgToSend(m_world.teammate(i)->order());
 
         if (!m_clients[i]->write(20))
         {
-            error("Agent " + m_world.agent(i)->id() + ": write failure");
+            error("Agent " + m_world.teammate(i)->id() + ": write failure");
             flag = false;
         }
         else
         {
-            debug("Agent " + m_world.agent(i)->id() + ": order sent");
+            debug("Agent " + m_world.teammate(i)->id() + ": order sent");
         }
     }
 

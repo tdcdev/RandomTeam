@@ -39,6 +39,10 @@
 
 
 
+class Agent;
+
+
+
 class SimulationGraph
 {
 
@@ -52,6 +56,9 @@ class SimulationGraph
         EdgeInfos* edge(const std::string& n1, const std::string& n2);
         VertexInfos* addVertex(const std::string& id);
         EdgeInfos* addEdge(const std::string& n1, const std::string& n2);
+        void addTeammate(const Agent* teammate);
+        void addOpponent(const Agent* opponent);
+        void clear();
         float fitness() const;
 
     private:
@@ -69,6 +76,8 @@ class SimulationGraph
 
         BGraph m_graph;
         VerticesMap m_vertices;
+        std::vector<const Agent*> m_teammates;
+        std::vector<const Agent*> m_opponents;
 
 };
 

@@ -28,20 +28,20 @@
 
 
 #include <RandomTeam/engine/World.hpp>
-#include <RandomTeam/engine/Agent.hpp>
 #include <RandomTeam/engine/Clock.hpp>
 #include <RandomTeam/RandomTeam/tools.hpp>
-#include <tinyxml2/tinyxml2.h>
 
 
 
 World::World():
     m_running(true),
     m_started(false),
+    m_simulationId(""),
     m_maxEdges(-1),
     m_maxVertices(-1),
     m_maxSteps(-1),
-    m_step(-1)
+    m_step(-1),
+    m_team("none")
 {
 
 }
@@ -55,16 +55,16 @@ World::~World()
 
 
 
-unsigned int World::numAgents() const
+unsigned int World::nbTeammates() const
 {
-    return m_agents.size();
+    return m_teammates.size();
 }
 
 
 
-std::shared_ptr<Agent> World::agent(unsigned int index) const
+Teammate* World::teammate(unsigned int index)
 {
-    return *(m_agents.begin() + index);
+    return &m_teammates[index];
 }
 
 
@@ -118,6 +118,36 @@ int World::step() const
 
 
 
+const std::string& World::team() const
+{
+    return m_team;
+}
+
+
+
+int World::remainingTime() const
+{
+    int min = INT_MAX;
+
+    for (
+            std::vector<Teammate>::const_iterator it = m_teammates.begin();
+            it != m_teammates.end();
+            ++it
+        )
+    {
+        int test = it->remainingTime();
+
+        if (test < min)
+        {
+            min = test;
+        }
+    }
+
+    return min;
+}
+
+
+
 void World::setRunning(bool on)
 {
     m_running = on;
@@ -137,7 +167,28 @@ void World::setStep(int step)
 
 
 
-void World::initSimulation(
+void World::setTeam(const std::string& team)
+{
+    if (m_team == "none")
+    {
+        m_team = team;
+
+        for (
+                std::vector<Teammate>::iterator teammate = m_teammates.begin();
+                teammate != m_teammates.end();
+                ++teammate
+            )
+        {
+            teammate->setTeam(team);
+        }
+
+        info("Playing as team \"" + m_team + "\"");
+    }
+}
+
+
+
+void World::startSimulation(
         const std::string& id,
         int maxEdges,
         int maxVertices,
@@ -148,6 +199,7 @@ void World::initSimulation(
     {
         std::string infostr;
 
+        m_graph = SimulationGraph();
         m_started = true;
         m_simulationId = id;
         m_maxEdges = maxEdges;
@@ -172,14 +224,46 @@ void World::endSimulation(const std::string& rank, const std::string& score)
         info("Simulation " + m_simulationId + " is over");
         info("rank = " + rank + " score = " + score);
 
-        m_graph = SimulationGraph();
         m_started = false;
         m_simulationId = "";
         m_maxEdges = -1;
         m_maxVertices = -1;
         m_maxSteps = -1;
         m_step = -1;
+        m_team = "none";
     }
+}
+
+
+
+void World::seeAgent(const Agent& agent)
+{
+    for (
+        std::vector<Teammate>::const_iterator teammate = m_teammates.begin();
+        teammate != m_teammates.end();
+        ++teammate
+        )
+    {
+        if (teammate->id() == agent.id())
+        {
+            this->setTeam(agent.team());
+            return;
+        }
+    }
+
+    for (
+        std::vector<Agent>::iterator opponent = m_opponents.begin();
+        opponent != m_opponents.end();
+        ++opponent
+        )
+    {
+        if (opponent->id() == agent.id())
+        {
+            return;
+        }
+    }
+
+    m_opponents.push_back(agent);
 }
 
 
@@ -230,38 +314,56 @@ bool World::loadTeam(const std::string& file)
         std::vector<std::string> attributes = {"id", "password"};
         std::vector<std::string> values;
 
-        getXMLAttributes(agent, attributes, values);
-        m_agents.push_back(std::shared_ptr<Agent>(
-                    new Agent(*this, values[0], values[1])
-                    ));
+        if (getXMLAttributes(agent, attributes, values))
+        {
+            m_teammates.push_back(Teammate(this, values[0], values[1]));
+        }
         agent = agent->NextSiblingElement("agent");
     }
 
-    info(std::to_string(m_agents.size()) + " agents created");
+    info(std::to_string(m_teammates.size()) + " agents created");
 
     return true;
 }
 
 
 
-int World::remainingTime() const
+void World::clear()
 {
-    std::vector< std::shared_ptr<Agent> >::const_iterator it = m_agents.begin();
-    int min = INT_MAX;
+    m_graph.clear();
 
-    while (it != m_agents.end())
+    m_opponents.erase(
+            std::remove_if(
+                m_opponents.begin(),
+                m_opponents.end(),
+                [](const Agent& agent) {return agent.remainingTime() < 0;}
+                ),
+            m_opponents.end()
+            );
+}
+
+
+
+void World::generateAllPlayouts()
+{
+
+    for (
+            std::vector<Teammate>::const_iterator it = m_teammates.begin();
+            it != m_teammates.end();
+            ++it
+        )
     {
-        int test = (*it)->remainingTime();
-
-        if (test < min)
-        {
-            min = test;
-        }
-
-        it++;
+        m_graph.addTeammate(&(*it));
     }
 
-    return min;
+    for (
+            std::vector<Agent>::const_iterator it = m_opponents.begin();
+            it != m_opponents.end();
+            ++it
+        )
+    {
+        m_graph.addOpponent(&(*it));
+    }
 }
 
 
@@ -270,13 +372,13 @@ void World::think()
 {
     if (m_started)
     {
-        std::vector< std::shared_ptr<Agent> >::iterator it = m_agents.begin();
-
-        while (it != m_agents.end())
+        for (
+            std::vector<Teammate>::iterator it = m_teammates.begin();
+            it != m_teammates.end();
+            ++it
+            )
         {
-            (*it)->actionRecharge();
-            it++;
+            it->actionRecharge();
         }
-
     }
 }

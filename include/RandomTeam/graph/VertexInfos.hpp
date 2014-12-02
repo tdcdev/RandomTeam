@@ -33,6 +33,12 @@
 
 
 #include <string>
+#include <vector>
+
+
+
+class Agent;
+class Teammate;
 
 
 
@@ -45,7 +51,10 @@ class VertexInfos
         VertexInfos(const std::string& id);
         VertexInfos(const VertexInfos& infos);
         VertexInfos& operator=(const VertexInfos& infos);
+        void clear();
 
+        std::vector<const Agent*> m_teammates;
+        std::vector<const Agent*> m_opponents;
         std::string m_id;
         int m_value;
         std::string m_team;

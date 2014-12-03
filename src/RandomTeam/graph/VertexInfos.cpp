@@ -36,7 +36,8 @@
 VertexInfos::VertexInfos():
     m_id(""),
     m_value(1),
-    m_team("none")
+    m_team("none"),
+    m_visited(false)
 {
 
 }
@@ -48,7 +49,8 @@ VertexInfos::VertexInfos(const VertexInfos& infos):
     m_opponents(infos.m_opponents),
     m_id(infos.m_id),
     m_value(infos.m_value),
-    m_team(infos.m_team)
+    m_team(infos.m_team),
+    m_visited(infos.m_visited)
 {
 
 }
@@ -58,7 +60,8 @@ VertexInfos::VertexInfos(const VertexInfos& infos):
 VertexInfos::VertexInfos(const std::string& id):
     m_id(id),
     m_value(1),
-    m_team("none")
+    m_team("none"),
+    m_visited(false)
 {
 
 }
@@ -72,6 +75,7 @@ VertexInfos& VertexInfos::operator=(const VertexInfos& infos)
     m_id = infos.m_id;
     m_value = infos.m_value;
     m_team = infos.m_team;
+    m_visited = infos.m_visited;
 
     return *this;
 }

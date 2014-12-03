@@ -238,6 +238,11 @@ void World::endSimulation(const std::string& rank, const std::string& score)
 
 void World::seeAgent(const Agent& agent)
 {
+    if (m_team == agent.team())
+    {
+        return;
+    }
+
     for (
         std::vector<Teammate>::const_iterator teammate = m_teammates.begin();
         teammate != m_teammates.end();
@@ -330,8 +335,6 @@ bool World::loadTeam(const std::string& file)
 
 void World::clear()
 {
-    m_graph.clear();
-
     m_opponents.erase(
             std::remove_if(
                 m_opponents.begin(),
@@ -346,24 +349,7 @@ void World::clear()
 
 void World::generateAllPlayouts()
 {
-
-    for (
-            std::vector<Teammate>::const_iterator it = m_teammates.begin();
-            it != m_teammates.end();
-            ++it
-        )
-    {
-        m_graph.addTeammate(&(*it));
-    }
-
-    for (
-            std::vector<Agent>::const_iterator it = m_opponents.begin();
-            it != m_opponents.end();
-            ++it
-        )
-    {
-        m_graph.addOpponent(&(*it));
-    }
+    m_graph.setAgents(m_teammates, m_opponents);
 }
 
 

@@ -33,13 +33,10 @@
 
 
 #include <map>
+#include <vector>
 #include <boost/graph/adjacency_list.hpp>
 #include <RandomTeam/graph/VertexInfos.hpp>
 #include <RandomTeam/graph/EdgeInfos.hpp>
-
-
-
-class Agent;
 
 
 
@@ -56,9 +53,11 @@ class SimulationGraph
         EdgeInfos* edge(const std::string& n1, const std::string& n2);
         VertexInfos* addVertex(const std::string& id);
         EdgeInfos* addEdge(const std::string& n1, const std::string& n2);
-        void addTeammate(const Agent* teammate);
-        void addOpponent(const Agent* opponent);
-        void clear();
+        void setAgents(
+                const std::vector<Teammate>& teammates, 
+                const std::vector<Agent>& opponents
+                );
+        void setupAgents();
         float fitness() const;
 
     private:
@@ -71,13 +70,16 @@ class SimulationGraph
             EdgeInfos
                 > BGraph;
         typedef BGraph::vertex_descriptor Vertex;
+        typedef BGraph::vertex_iterator VertexIterator;
         typedef BGraph::edge_descriptor Edge;
+        typedef BGraph::edge_iterator EdgeIterator;
         typedef std::map<std::string, Vertex> VerticesMap;
+        typedef std::pair<VertexIterator, VertexIterator> VerticesMapIterator;
 
         BGraph m_graph;
         VerticesMap m_vertices;
-        std::vector<const Agent*> m_teammates;
-        std::vector<const Agent*> m_opponents;
+        std::vector<Agent> m_teammates;
+        std::vector<Agent> m_opponents;
 
 };
 

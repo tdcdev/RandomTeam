@@ -28,7 +28,7 @@
 
 
 #include <RandomTeam/graph/SimulationGraph.hpp>
-#include <RandomTeam/engine/Agent.hpp>
+#include <RandomTeam/engine/Teammate.hpp>
 
 
 
@@ -40,38 +40,44 @@ SimulationGraph::SimulationGraph()
 
 
 SimulationGraph::SimulationGraph(const SimulationGraph& sg):
-    m_graph(sg.m_graph)
+    m_graph(sg.m_graph),
+    m_teammates(sg.m_teammates),
+    m_opponents(sg.m_opponents)
 {
-    std::pair<BGraph::vertex_iterator, BGraph::vertex_iterator> it;
-
-    it = boost::vertices(m_graph);
-
-    while (it.first != it.second)
+    for (
+            VerticesMapIterator it = boost::vertices(m_graph);
+            it.first != it.second;
+            ++it.first
+        )
     {
         Vertex vertex = *it.first;
         VertexInfos infos = m_graph[vertex];
         m_vertices[infos.m_id] = vertex;
-        it.first++;
     }
+
+    this->setupAgents();
 }
 
 
 
 SimulationGraph& SimulationGraph::operator=(const SimulationGraph& sg)
 {
-
-    std::pair<BGraph::vertex_iterator, BGraph::vertex_iterator> it;
-
     m_graph = sg.m_graph;
-    it = boost::vertices(m_graph);
+    m_teammates = sg.m_teammates;
+    m_opponents = sg.m_opponents;
 
-    while (it.first != it.second)
+    for (
+            VerticesMapIterator it = boost::vertices(m_graph);
+            it.first != it.second;
+            ++it.first
+        )
     {
         Vertex vertex = *it.first;
         VertexInfos infos = m_graph[vertex];
         m_vertices[infos.m_id] = vertex;
-        it.first++;
     }
+
+    this->setupAgents();
 
     return *this;
 }
@@ -141,51 +147,95 @@ EdgeInfos* SimulationGraph::addEdge(const std::string& n1, const std::string& n2
 
 
 
-void SimulationGraph::addTeammate(const Agent* teammate)
+void SimulationGraph::setAgents(
+        const std::vector<Teammate>& teammates,
+        const std::vector<Agent>& opponents
+        )
 {
-    VertexInfos* vertex = this->vertex(teammate->position());
-
-    if (vertex != nullptr)
-    {
-        vertex->m_teammates.push_back(teammate);
-        m_teammates.push_back(teammate);
-    }
-}
-
-
-
-void SimulationGraph::addOpponent(const Agent* opponent)
-{
-    VertexInfos* vertex = this->vertex(opponent->position());
-
-    if (vertex != nullptr)
-    {
-        vertex->m_opponents.push_back(opponent);
-        m_opponents.push_back(opponent);
-    }
-}
-
-
-
-void SimulationGraph::clear()
-{
-    std::pair<BGraph::vertex_iterator, BGraph::vertex_iterator> it;
-
-    it = boost::vertices(m_graph);
-
-    while (it.first != it.second)
-    {
-        m_graph[*it.first].clear();
-        it.first++;
-    }
-
     m_teammates.clear();
     m_opponents.clear();
+
+    for (
+            std::vector<Teammate>::const_iterator it = teammates.begin();
+            it != teammates.end();
+            ++it
+        )
+    {
+        m_teammates.push_back(Agent(*it));
+    }
+
+    for (
+            std::vector<Agent>::const_iterator it = opponents.begin();
+            it != opponents.end();
+            ++it
+        )
+    {
+        m_opponents.push_back(Agent(*it));
+    }
+
+    this->setupAgents();
+}
+
+
+
+void SimulationGraph::setupAgents()
+{
+    for (
+            VerticesMapIterator it = boost::vertices(m_graph);
+            it.first != it.second;
+            ++it.first
+        )
+    {
+        m_graph[*it.first].clear();
+    }
+
+    for (
+            std::vector<Agent>::const_iterator it = m_teammates.begin();
+            it != m_teammates.end();
+            ++it
+        )
+    {
+        VertexInfos* vertex = this->vertex(it->position());
+
+        if (vertex != nullptr)
+        {
+            vertex->m_teammates.push_back(&(*it));
+            vertex->m_visited = true;
+        }
+    }
+
+    for (
+            std::vector<Agent>::const_iterator it = m_opponents.begin();
+            it != m_opponents.end();
+            ++it
+        )
+    {
+        VertexInfos* vertex = this->vertex(it->position());
+
+        if (vertex != nullptr)
+        {
+            vertex->m_opponents.push_back(&(*it));
+        }
+    }
 }
 
 
 
 float SimulationGraph::fitness() const
 {
-    return 0.f;
+    float count = 0.f;
+
+    for (
+            VerticesMapIterator it = boost::vertices(m_graph);
+            it.first != it.second;
+            ++it.first
+        )
+    {
+        if (m_graph[*it.first].m_visited)
+        {
+            count += 1.f;
+        }
+    }
+
+    return count;
 }

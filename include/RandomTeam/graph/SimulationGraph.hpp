@@ -54,7 +54,11 @@ class SimulationGraph
         VertexInfos* addVertex(const std::string& id);
         EdgeInfos* addEdge(const std::string& n1, const std::string& n2);
         void setAgents(
-                const std::vector<Teammate>& teammates, 
+                const std::vector<Teammate>& teammates,
+                const std::vector<Agent>& opponents
+                );
+        void setAgents(
+                const std::vector<Agent>& teammates,
                 const std::vector<Agent>& opponents
                 );
         void setupAgents();

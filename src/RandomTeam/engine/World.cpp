@@ -34,6 +34,7 @@
 
 
 World::World():
+    m_randGen(std::random_device()()),
     m_running(true),
     m_started(false),
     m_simulationId(""),
@@ -350,6 +351,22 @@ void World::clear()
 void World::generateAllPlayouts()
 {
     m_graph.setAgents(m_teammates, m_opponents);
+
+    for (
+            std::vector<Teammate>::iterator it = m_teammates.begin();
+            it != m_teammates.end();
+            ++it
+        )
+    {
+        it->generatePlayouts(&m_graph);
+        unsigned int nb = it->nbPlayouts();
+
+        if (nb > 0)
+        {
+            std::uniform_int_distribution<unsigned int> uniform_dist(0, nb - 1);
+            it->performPlayout(uniform_dist(m_randGen));
+        }
+    }
 }
 
 
@@ -364,7 +381,7 @@ void World::think()
             ++it
             )
         {
-            it->actionRecharge();
+
         }
     }
 }

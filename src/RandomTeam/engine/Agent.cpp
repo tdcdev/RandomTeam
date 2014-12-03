@@ -29,6 +29,7 @@
 
 #include <RandomTeam/engine/Agent.hpp>
 #include <RandomTeam/engine/Clock.hpp>
+#include <RandomTeam/RandomTeam/tools.hpp>
 
 
 
@@ -47,7 +48,16 @@ Agent::Agent(const std::string& id):
     m_zoneScore(-1),
     m_deadline(-1)
 {
-
+    m_actions.push_back(
+            Action(
+                rechargeGenerator, rechargeSimulator, rechargePerformer
+                )
+            );
+    m_actions.push_back(
+            Action(
+                gotoGenerator, gotoSimulator, gotoPerformer
+                )
+            );
 }
 
 
@@ -65,7 +75,10 @@ Agent::Agent(const Agent& agent):
     m_strength(agent.m_strength),
     m_visRange(agent.m_visRange),
     m_zoneScore(agent.m_zoneScore),
-    m_deadline(agent.m_deadline)
+    m_deadline(agent.m_deadline),
+    m_actions(agent.m_actions),
+    m_graph(agent.m_graph),
+    m_playouts(agent.m_playouts)
 {
 
 }
@@ -87,6 +100,9 @@ Agent& Agent::operator=(const Agent& agent)
     m_visRange = agent.m_visRange;
     m_zoneScore = agent.m_zoneScore;
     m_deadline = agent.m_deadline;
+    m_actions = agent.m_actions;
+    m_graph = agent.m_graph;
+    m_playouts = agent.m_playouts;
 
     return *this;
 }
@@ -210,6 +226,30 @@ int Agent::remainingTime() const
 
 
 
+unsigned int Agent::nbPlayouts() const
+{
+    return m_playouts.size();
+}
+
+
+
+bool Agent::simulatePlayout(unsigned int index, SimulationGraph& graph) const
+{
+    if (index >= m_playouts.size())
+    {
+        error("Agent " + m_id + ": index playout out of range");
+        return false;
+    }
+
+    Playout playout = m_playouts[index];
+    ActionSimulator sim = std::get<1>(playout.first);
+    graph = sim(m_id, playout.second, *m_graph);
+
+    return true;
+}
+
+
+
 void Agent::setTeam(const std::string& team)
 {
     m_team = team;
@@ -290,4 +330,33 @@ void Agent::setZoneScore(int zoneScore)
 void Agent::setDeadline(long long int deadline)
 {
     m_deadline = deadline;
+}
+
+
+
+void Agent::generatePlayouts(SimulationGraph* graph)
+{
+    m_playouts.clear();
+    m_graph = graph;
+
+    for (
+            ActionsVector::const_iterator action = m_actions.begin();
+            action != m_actions.end();
+            ++action
+        )
+    {
+        ActionGenerator gen = std::get<0>(*action);
+        std::vector<std::string> params;
+
+        gen(m_id, *m_graph, params);
+
+        for (
+                std::vector<std::string>::const_iterator param = params.begin();
+                param != params.end();
+                ++param
+            )
+        {
+            m_playouts.push_back(Playout(*action, *param));
+        }
+    }
 }

@@ -68,8 +68,8 @@ class Teammate: public Agent
         bool connected() const;
         const std::string& requestId() const;
         void authrequest();
-        void actionGoto(const std::string& param);
-        void actionRecharge();
+        void setActionOrder(const std::string& type, const std::string& order);
+        bool performPlayout(unsigned int index);
         void read(const std::string& msg);
 
     private:

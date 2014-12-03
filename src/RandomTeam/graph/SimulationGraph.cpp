@@ -152,8 +152,7 @@ void SimulationGraph::setAgents(
         const std::vector<Agent>& opponents
         )
 {
-    m_teammates.clear();
-    m_opponents.clear();
+    std::vector<Agent> tmp;
 
     for (
             std::vector<Teammate>::const_iterator it = teammates.begin();
@@ -161,17 +160,21 @@ void SimulationGraph::setAgents(
             ++it
         )
     {
-        m_teammates.push_back(Agent(*it));
+        tmp.push_back(Agent(*it));
     }
 
-    for (
-            std::vector<Agent>::const_iterator it = opponents.begin();
-            it != opponents.end();
-            ++it
+    this->setAgents(tmp, opponents);
+}
+
+
+
+void SimulationGraph::setAgents(
+        const std::vector<Agent>& teammates,
+        const std::vector<Agent>& opponents
         )
-    {
-        m_opponents.push_back(Agent(*it));
-    }
+{
+    m_teammates = teammates;
+    m_opponents = opponents;
 
     this->setupAgents();
 }

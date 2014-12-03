@@ -33,6 +33,7 @@
 
 
 #include <vector>
+#include <random>
 #include <RandomTeam/engine/Teammate.hpp>
 #include <RandomTeam/graph/SimulationGraph.hpp>
 
@@ -76,6 +77,7 @@ class World
 
     private:
 
+        std::mt19937 m_randGen;
         SimulationGraph m_graph;
         std::vector<Teammate> m_teammates;
         std::vector<Agent> m_opponents;

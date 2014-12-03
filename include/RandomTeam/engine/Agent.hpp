@@ -33,6 +33,8 @@
 
 
 #include <string>
+#include <RandomTeam/engine/actions.hpp>
+#include <RandomTeam/graph/SimulationGraph.hpp>
 
 
 
@@ -69,6 +71,8 @@ class Agent
         int zoneScore() const;
         long long int deadline() const;
         int remainingTime() const;
+        unsigned int nbPlayouts() const;
+        bool simulatePlayout(unsigned int index, SimulationGraph& graph) const;
         void setTeam(const std::string& team);
         void setPosition(std::string& position);
         void setRole(Agent::Role role);
@@ -81,6 +85,8 @@ class Agent
         void setVisRange(int visRange);
         void setZoneScore(int zoneScore);
         void setDeadline(long long int deadline);
+        void generatePlayouts(SimulationGraph* graph);
+
 
     protected:
 
@@ -97,6 +103,9 @@ class Agent
         int m_visRange;
         int m_zoneScore;
         long long int m_deadline;
+        ActionsVector m_actions;
+        SimulationGraph* m_graph;
+        PlayoutsVector m_playouts;
 
 };
 

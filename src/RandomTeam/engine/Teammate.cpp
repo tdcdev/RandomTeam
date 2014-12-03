@@ -126,25 +126,40 @@ void Teammate::authrequest()
 
 
 
-void Teammate::actionGoto(const std::string& param)
+void Teammate::setActionOrder(const std::string& type, const std::string& param)
 {
     m_order = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>";
     m_order += "<message type=\"action\">";
-    m_order += "<action type=\"goto\" id=\"" + m_requestId + "\" ";
-    m_order += "param=\"" + param + "\"/>";
+    m_order += "<action ";
+    m_order += "id=\"" + m_requestId + "\" ";
+    m_order += "type=\"" + type + "\" ";
+
+    if (!param.empty())
+    {
+        m_order += "param=\"" + m_requestId + "\"";
+    }
+
+    m_order += "/>";
     m_order += "</message>";
     m_order += '\0';
 }
 
 
 
-void Teammate::actionRecharge()
+bool Teammate::performPlayout(unsigned int index)
 {
-    m_order = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>";
-    m_order += "<message type=\"action\">";
-    m_order += "<action type=\"recharge\" id=\"" + m_requestId + "\"/>";
-    m_order += "</message>";
-    m_order += '\0';
+    if (index >= m_playouts.size())
+    {
+        error("Agent " + m_id + ": index playout out of range");
+        return false;
+    }
+
+    Playout playout = m_playouts[index];
+    ActionPerformer perf = std::get<2>(playout.first);
+
+    perf(*this, playout.second);
+
+    return true;
 }
 
 

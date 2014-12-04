@@ -91,19 +91,22 @@ SimulationGraph::~SimulationGraph()
 
 
 
-VertexInfos* SimulationGraph::vertex(const std::string& id)
+const VertexInfos* SimulationGraph::vertex(const std::string& id) const
 {
     if (m_vertices.find(id) == m_vertices.end())
     {
         return nullptr;
     }
 
-    return &m_graph[m_vertices[id]];
+    return &m_graph[m_vertices.at(id)];
 }
 
 
 
-EdgeInfos* SimulationGraph::edge(const std::string& n1, const std::string& n2)
+const EdgeInfos* SimulationGraph::edge(
+        const std::string& n1,
+        const std::string& n2
+        ) const
 {
     if (m_vertices.find(n1) == m_vertices.end())
     {
@@ -115,11 +118,53 @@ EdgeInfos* SimulationGraph::edge(const std::string& n1, const std::string& n2)
         return nullptr;
     }
 
-    Vertex vertex1 = m_vertices[n1];
-    Vertex vertex2 = m_vertices[n2];
+    Vertex vertex1 = m_vertices.at(n1);
+    Vertex vertex2 = m_vertices.at(n2);
     Edge edge = boost::edge(vertex1, vertex2, m_graph).first;
 
     return &m_graph[edge];
+}
+
+
+
+void SimulationGraph::getNeighbors(
+                const std::string& id,
+                std::vector<const VertexInfos*>& neighbors
+                ) const
+{
+    if (m_vertices.find(id) == m_vertices.end())
+    {
+        return;
+    }
+
+    std::pair<BGraph::adjacency_iterator, BGraph::adjacency_iterator> it;
+    Vertex vertex = m_vertices.at(id);
+
+    it = boost::adjacent_vertices(vertex, m_graph);
+
+    while (it.first != it.second)
+    {
+        neighbors.push_back(&m_graph[*it.first]);
+        it.first++;
+    }
+}
+
+
+
+VertexInfos* SimulationGraph::vertex(const std::string& id)
+{
+    return const_cast<VertexInfos*>(
+            static_cast<const SimulationGraph&>(*this).vertex(id)
+            );
+}
+
+
+
+EdgeInfos* SimulationGraph::edge(const std::string& n1, const std::string& n2)
+{
+    return const_cast<EdgeInfos*>(
+            static_cast<const SimulationGraph&>(*this).edge(n1, n2)
+            );
 }
 
 
@@ -136,7 +181,10 @@ VertexInfos* SimulationGraph::addVertex(const std::string& id)
 
 
 
-EdgeInfos* SimulationGraph::addEdge(const std::string& n1, const std::string& n2)
+EdgeInfos* SimulationGraph::addEdge(
+        const std::string& n1,
+        const std::string& n2
+        )
 {
     this->addVertex(n1);
     this->addVertex(n2);

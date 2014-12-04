@@ -110,6 +110,7 @@ int main(int argc, char** argv)
     bool connected = false;
     bool write = false;
     int endSleepTime = 5;
+    int nbThink = 0;
 
     if (!world.loadTeam(g_team))
     {
@@ -136,14 +137,17 @@ int main(int argc, char** argv)
             world.clear();
             serverInterface.readClients(1300);
             world.generateAllPlayouts();
+            nbThink = 0;
         }
 
         world.think();
+        nbThink++;
 
         if (write && world.remainingTime() > 0 && world.remainingTime() < 150)
         {
             write = false;
             serverInterface.writeClients();
+            info("Think calls: " + std::to_string(nbThink));
         }
     }
 

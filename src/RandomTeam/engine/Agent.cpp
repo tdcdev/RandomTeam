@@ -77,7 +77,6 @@ Agent::Agent(const Agent& agent):
     m_zoneScore(agent.m_zoneScore),
     m_deadline(agent.m_deadline),
     m_actions(agent.m_actions),
-    m_graph(agent.m_graph),
     m_playouts(agent.m_playouts)
 {
 
@@ -101,7 +100,6 @@ Agent& Agent::operator=(const Agent& agent)
     m_zoneScore = agent.m_zoneScore;
     m_deadline = agent.m_deadline;
     m_actions = agent.m_actions;
-    m_graph = agent.m_graph;
     m_playouts = agent.m_playouts;
 
     return *this;
@@ -233,7 +231,11 @@ unsigned int Agent::nbPlayouts() const
 
 
 
-bool Agent::simulatePlayout(unsigned int index, SimulationGraph& graph) const
+bool Agent::simulatePlayout(
+        unsigned int index,
+        const SimulationGraph& graph,
+        SimulationGraph& result
+        ) const
 {
     if (index >= m_playouts.size())
     {
@@ -243,9 +245,8 @@ bool Agent::simulatePlayout(unsigned int index, SimulationGraph& graph) const
 
     Playout playout = m_playouts[index];
     ActionSimulator sim = std::get<1>(playout.first);
-    graph = sim(m_id, playout.second, *m_graph);
 
-    return true;
+    return sim(*this, playout.second, graph, result);
 }
 
 
@@ -334,10 +335,9 @@ void Agent::setDeadline(long long int deadline)
 
 
 
-void Agent::generatePlayouts(SimulationGraph* graph)
+void Agent::generatePlayouts(const SimulationGraph& graph)
 {
     m_playouts.clear();
-    m_graph = graph;
 
     for (
             ActionsVector::const_iterator action = m_actions.begin();
@@ -348,7 +348,7 @@ void Agent::generatePlayouts(SimulationGraph* graph)
         ActionGenerator gen = std::get<0>(*action);
         std::vector<std::string> params;
 
-        gen(m_id, *m_graph, params);
+        gen(*this, graph, params);
 
         for (
                 std::vector<std::string>::const_iterator param = params.begin();

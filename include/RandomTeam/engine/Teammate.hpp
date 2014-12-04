@@ -83,7 +83,7 @@ class Teammate: public Agent
         void requestactionSelf(tinyxml2::XMLElement* perception);
         void requestactionVisibleVertices(tinyxml2::XMLElement* perception);
         void requestactionVisibleEdges(tinyxml2::XMLElement* perception);
-        void requestactionVisibleentities(tinyxml2::XMLElement* perception);
+        void requestactionVisibleEntities(tinyxml2::XMLElement* perception);
         void requestactionProbedVertices(tinyxml2::XMLElement* perception);
         void requestactionSurveyedEdges(tinyxml2::XMLElement* perception);
         void requestactionInspectedEntities(tinyxml2::XMLElement* perception);

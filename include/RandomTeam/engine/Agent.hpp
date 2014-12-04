@@ -72,7 +72,11 @@ class Agent
         long long int deadline() const;
         int remainingTime() const;
         unsigned int nbPlayouts() const;
-        bool simulatePlayout(unsigned int index, SimulationGraph& graph) const;
+        bool simulatePlayout(
+                unsigned int index,
+                const SimulationGraph& graph,
+                SimulationGraph& result
+                ) const;
         void setTeam(const std::string& team);
         void setPosition(std::string& position);
         void setRole(Agent::Role role);
@@ -85,7 +89,7 @@ class Agent
         void setVisRange(int visRange);
         void setZoneScore(int zoneScore);
         void setDeadline(long long int deadline);
-        void generatePlayouts(SimulationGraph* graph);
+        void generatePlayouts(const SimulationGraph& graph);
 
 
     protected:
@@ -104,7 +108,6 @@ class Agent
         int m_zoneScore;
         long long int m_deadline;
         ActionsVector m_actions;
-        SimulationGraph* m_graph;
         PlayoutsVector m_playouts;
 
 };

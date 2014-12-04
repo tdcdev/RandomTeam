@@ -358,7 +358,7 @@ void World::generateAllPlayouts()
             ++it
         )
     {
-        it->generatePlayouts(&m_graph);
+        it->generatePlayouts(m_graph);
         unsigned int nb = it->nbPlayouts();
 
         if (nb > 0)

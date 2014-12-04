@@ -38,14 +38,15 @@
 
 
 typedef void (*ActionGenerator)(
-        const std::string&,
+        const Agent&,
         const SimulationGraph&,
         std::vector<std::string>&
         );
-typedef SimulationGraph (*ActionSimulator)(
+typedef bool (*ActionSimulator)(
+        const Agent&,
         const std::string&,
-        const std::string&,
-        const SimulationGraph&
+        const SimulationGraph&,
+        SimulationGraph&
         );
 typedef void (*ActionPerformer)(Teammate&, const std::string&);
 typedef std::tuple<ActionGenerator, ActionSimulator, ActionPerformer> Action;
@@ -57,24 +58,26 @@ typedef std::vector<Playout> PlayoutsVector;
 
 
 void rechargeGenerator(
-        const std::string& id,
+        const Agent& agent,
         const SimulationGraph& graph,
         std::vector<std::string>&
         );
 void gotoGenerator(
-        const std::string& id,
+        const Agent& agent,
         const SimulationGraph& graph,
         std::vector<std::string>&
         );
-SimulationGraph rechargeSimulator(
-        const std::string& id,
+bool rechargeSimulator(
+        const Agent& agent,
         const std::string& param,
-        const SimulationGraph& graph
+        const SimulationGraph& graph,
+        SimulationGraph& result
         );
-SimulationGraph gotoSimulator(
-        const std::string& id,
+bool gotoSimulator(
+        const Agent& agent,
         const std::string& param,
-        const SimulationGraph& graph
+        const SimulationGraph& graph,
+        SimulationGraph& result
         );
 void rechargePerformer(Teammate& teammate, const std::string& param);
 void gotoPerformer(Teammate& teammate, const std::string& param);

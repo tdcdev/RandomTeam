@@ -136,7 +136,7 @@ void Teammate::setActionOrder(const std::string& type, const std::string& param)
 
     if (!param.empty())
     {
-        m_order += "param=\"" + m_requestId + "\"";
+        m_order += "param=\"" + param + "\"";
     }
 
     m_order += "/>";
@@ -366,7 +366,7 @@ void Teammate::requestaction(tinyxml2::XMLElement* message)
         this->requestactionSelf(perception);
         this->requestactionVisibleVertices(perception);
         this->requestactionVisibleEdges(perception);
-        this->requestactionVisibleentities(perception);
+        this->requestactionVisibleEntities(perception);
         this->requestactionProbedVertices(perception);
         this->requestactionSurveyedEdges(perception);
         this->requestactionInspectedEntities(perception);
@@ -427,7 +427,10 @@ void Teammate::requestactionSelf(tinyxml2::XMLElement* perception)
             m_visRange = std::stoi(values[10]);
             m_zoneScore = std::stoi(values[11]);
 
-            debug("Agent " + m_id + ": last " + values[0] + " " + values[2]);
+            std::string debugstr;
+            debugstr += "Agent " + m_id + ": last ";
+            debugstr += values[0] + "(" + values[1] + ") " + values[2];
+            debug(debugstr);
         }
     }
 }
@@ -484,7 +487,7 @@ void Teammate::requestactionVisibleEdges(tinyxml2::XMLElement* perception)
 
 
 
-void Teammate::requestactionVisibleentities(tinyxml2::XMLElement* perception)
+void Teammate::requestactionVisibleEntities(tinyxml2::XMLElement* perception)
 {
     tinyxml2::XMLElement* entities;
 

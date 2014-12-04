@@ -49,10 +49,22 @@ class SimulationGraph
         SimulationGraph(const SimulationGraph& sg);
         SimulationGraph& operator=(const SimulationGraph& sg);
         virtual ~SimulationGraph();
+        const VertexInfos* vertex(const std::string& id) const;
+        const EdgeInfos* edge(
+                const std::string& n1,
+                const std::string& n2
+                ) const;
+        void getNeighbors(
+                const std::string& id,
+                std::vector<const VertexInfos*>& neighbors
+                ) const;
         VertexInfos* vertex(const std::string& id);
         EdgeInfos* edge(const std::string& n1, const std::string& n2);
         VertexInfos* addVertex(const std::string& id);
-        EdgeInfos* addEdge(const std::string& n1, const std::string& n2);
+        EdgeInfos* addEdge(
+                const std::string& n1,
+                const std::string& n2
+                );
         void setAgents(
                 const std::vector<Teammate>& teammates,
                 const std::vector<Agent>& opponents

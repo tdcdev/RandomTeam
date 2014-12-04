@@ -33,7 +33,7 @@
 
 
 void rechargeGenerator(
-        const std::string& id,
+        const Agent& agent,
         const SimulationGraph& graph,
         std::vector<std::string>& params
         )
@@ -44,34 +44,57 @@ void rechargeGenerator(
 
 
 void gotoGenerator(
-        const std::string& id,
+        const Agent& agent,
         const SimulationGraph& graph,
         std::vector<std::string>& params
         )
 {
+    std::vector<const VertexInfos*> vertices;
+    const VertexInfos* vertex;
 
+    vertex = graph.vertex(agent.position());
+
+    if (vertex != nullptr)
+    {
+        graph.getNeighbors(vertex->m_id, vertices);
+
+        for (
+            std::vector<const VertexInfos*>::iterator it = vertices.begin();
+            it != vertices.end();
+            ++it
+            )
+        {
+            params.push_back((*it)->m_id);
+        }
+    }
 }
 
 
 
-SimulationGraph rechargeSimulator(
-        const std::string& id,
+bool rechargeSimulator(
+        const Agent& agent,
         const std::string& param,
-        const SimulationGraph& graph
+        const SimulationGraph& graph,
+        SimulationGraph& result
         )
 {
-    return graph;
+    /* TODO */
+
+    return true;
 }
 
 
 
-SimulationGraph gotoSimulator(
-        const std::string& id,
+bool gotoSimulator(
+        const Agent& agent,
         const std::string& param,
-        const SimulationGraph& graph
+        const SimulationGraph& graph,
+        SimulationGraph& result
         )
 {
-    return graph;
+    /* TODO */
+
+    return true;
 }
 
 

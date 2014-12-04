@@ -146,6 +146,7 @@ int main(int argc, char** argv)
         if (write && world.remainingTime() > 0 && world.remainingTime() < 150)
         {
             write = false;
+            world.perform();
             serverInterface.writeClients();
             info("Think calls: " + std::to_string(nbThink));
         }

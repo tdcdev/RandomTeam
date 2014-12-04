@@ -61,7 +61,7 @@ void gotoGenerator(
         for (
             std::vector<const VertexInfos*>::iterator it = vertices.begin();
             it != vertices.end();
-            ++it
+            it++
             )
         {
             params.push_back((*it)->m_id);
@@ -74,11 +74,20 @@ void gotoGenerator(
 bool rechargeSimulator(
         const Agent& agent,
         const std::string& param,
-        const SimulationGraph& graph,
-        SimulationGraph& result
+        SimulationGraph& graph
         )
 {
-    /* TODO */
+    Agent* newAgent = graph.teammate(agent.id());
+
+    if (newAgent == nullptr)
+    {
+        return false;
+    }
+
+    int max = agent.maxEnergy();
+    int energy = std::max(agent.energy() + max / 2, max);
+
+    newAgent->setEnergy(energy);
 
     return true;
 }
@@ -88,11 +97,31 @@ bool rechargeSimulator(
 bool gotoSimulator(
         const Agent& agent,
         const std::string& param,
-        const SimulationGraph& graph,
-        SimulationGraph& result
+        SimulationGraph& graph
         )
 {
-    /* TODO */
+    Agent* newAgent = graph.teammate(agent.id());
+
+    if (newAgent == nullptr)
+    {
+        return false;
+    }
+
+    VertexInfos* from = graph.vertex(newAgent->position());
+    VertexInfos* to = graph.vertex(param);
+    EdgeInfos* path = graph.edge(newAgent->position(), param);
+
+    if (from == nullptr || to == nullptr || path == nullptr)
+    {
+        return false;
+    }
+
+    std::vector<const Agent*>& v(from->m_teammates);
+    v.erase(std::remove(v.begin(), v.end(), newAgent), v.end());
+    to->m_teammates.push_back(newAgent);
+    to->m_visited = true;
+    newAgent->setPosition(param);
+    newAgent->setEnergy(newAgent->energy() - path->m_weight);
 
     return true;
 }

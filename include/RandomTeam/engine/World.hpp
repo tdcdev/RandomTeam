@@ -74,6 +74,7 @@ class World
         void clear();
         void generateAllPlayouts();
         void think();
+        void perform();
 
     private:
 
@@ -89,6 +90,8 @@ class World
         int m_maxSteps;
         int m_step;
         std::string m_team;
+        std::vector<int> m_solution;
+        float m_fitness;
 
 };
 

@@ -178,7 +178,7 @@ bool getXMLAttributes(
     for (
         std::vector<std::string>::const_iterator it = attributes.begin();
         it != attributes.end();
-        ++it
+        it++
         )
     {
         const char* v = tag->Attribute(it->c_str());

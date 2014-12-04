@@ -47,7 +47,7 @@ SimulationGraph::SimulationGraph(const SimulationGraph& sg):
     for (
             VerticesMapIterator it = boost::vertices(m_graph);
             it.first != it.second;
-            ++it.first
+            it.first++
         )
     {
         Vertex vertex = *it.first;
@@ -69,7 +69,7 @@ SimulationGraph& SimulationGraph::operator=(const SimulationGraph& sg)
     for (
             VerticesMapIterator it = boost::vertices(m_graph);
             it.first != it.second;
-            ++it.first
+            it.first++
         )
     {
         Vertex vertex = *it.first;
@@ -87,6 +87,25 @@ SimulationGraph& SimulationGraph::operator=(const SimulationGraph& sg)
 SimulationGraph::~SimulationGraph()
 {
 
+}
+
+
+
+const Agent* SimulationGraph::teammate(const std::string& id) const
+{
+    for (
+        std::vector<Agent>::const_iterator it = m_teammates.begin();
+        it != m_teammates.end();
+        it++
+        )
+    {
+        if (it->id() == id)
+        {
+            return &(*it);
+        }
+    }
+
+    return nullptr;
 }
 
 
@@ -151,6 +170,15 @@ void SimulationGraph::getNeighbors(
 
 
 
+Agent* SimulationGraph::teammate(const std::string& id)
+{
+    return const_cast<Agent*>(
+            static_cast<const SimulationGraph&>(*this).teammate(id)
+            );
+}
+
+
+
 VertexInfos* SimulationGraph::vertex(const std::string& id)
 {
     return const_cast<VertexInfos*>(
@@ -205,7 +233,7 @@ void SimulationGraph::setAgents(
     for (
             std::vector<Teammate>::const_iterator it = teammates.begin();
             it != teammates.end();
-            ++it
+            it++
         )
     {
         tmp.push_back(Agent(*it));
@@ -234,7 +262,7 @@ void SimulationGraph::setupAgents()
     for (
             VerticesMapIterator it = boost::vertices(m_graph);
             it.first != it.second;
-            ++it.first
+            it.first++
         )
     {
         m_graph[*it.first].clear();
@@ -243,7 +271,7 @@ void SimulationGraph::setupAgents()
     for (
             std::vector<Agent>::const_iterator it = m_teammates.begin();
             it != m_teammates.end();
-            ++it
+            it++
         )
     {
         VertexInfos* vertex = this->vertex(it->position());
@@ -258,7 +286,7 @@ void SimulationGraph::setupAgents()
     for (
             std::vector<Agent>::const_iterator it = m_opponents.begin();
             it != m_opponents.end();
-            ++it
+            it++
         )
     {
         VertexInfos* vertex = this->vertex(it->position());
@@ -279,12 +307,24 @@ float SimulationGraph::fitness() const
     for (
             VerticesMapIterator it = boost::vertices(m_graph);
             it.first != it.second;
-            ++it.first
+            it.first++
         )
     {
         if (m_graph[*it.first].m_visited)
         {
             count += 1.f;
+        }
+    }
+
+    for (
+        std::vector<Agent>::const_iterator it = m_teammates.begin();
+        it != m_teammates.end();
+        it++
+        )
+    {
+        if (it->energy() < it->maxEnergy() / 3)
+        {
+            count -= 3;
         }
     }
 

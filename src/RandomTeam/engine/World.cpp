@@ -133,7 +133,7 @@ int World::remainingTime() const
     for (
             std::vector<Teammate>::const_iterator it = m_teammates.begin();
             it != m_teammates.end();
-            ++it
+            it++
         )
     {
         int test = it->remainingTime();
@@ -177,7 +177,7 @@ void World::setTeam(const std::string& team)
         for (
                 std::vector<Teammate>::iterator teammate = m_teammates.begin();
                 teammate != m_teammates.end();
-                ++teammate
+                teammate++
             )
         {
             teammate->setTeam(team);
@@ -247,7 +247,7 @@ void World::seeAgent(const Agent& agent)
     for (
         std::vector<Teammate>::const_iterator teammate = m_teammates.begin();
         teammate != m_teammates.end();
-        ++teammate
+        teammate++
         )
     {
         if (teammate->id() == agent.id())
@@ -260,7 +260,7 @@ void World::seeAgent(const Agent& agent)
     for (
         std::vector<Agent>::iterator opponent = m_opponents.begin();
         opponent != m_opponents.end();
-        ++opponent
+        opponent++
         )
     {
         if (opponent->id() == agent.id())
@@ -351,21 +351,15 @@ void World::clear()
 void World::generateAllPlayouts()
 {
     m_graph.setAgents(m_teammates, m_opponents);
+    m_fitness = std::numeric_limits<float>::min();
 
     for (
             std::vector<Teammate>::iterator it = m_teammates.begin();
             it != m_teammates.end();
-            ++it
+            it++
         )
     {
         it->generatePlayouts(m_graph);
-        unsigned int nb = it->nbPlayouts();
-
-        if (nb > 0)
-        {
-            std::uniform_int_distribution<unsigned int> uniform_dist(0, nb - 1);
-            it->performPlayout(uniform_dist(m_randGen));
-        }
     }
 }
 
@@ -373,15 +367,66 @@ void World::generateAllPlayouts()
 
 void World::think()
 {
-    if (m_started)
+    if (!m_started)
     {
-        for (
-            std::vector<Teammate>::iterator it = m_teammates.begin();
-            it != m_teammates.end();
-            ++it
-            )
-        {
+        return;
+    }
 
+    std::vector<int> cur;
+    std::vector<Teammate>::const_iterator it;
+    SimulationGraph g(m_graph);
+
+    for (
+            it = m_teammates.begin();
+            it != m_teammates.end();
+            it++
+        )
+    {
+        unsigned int nb = it->nbPlayouts();
+        int rand = -1;
+
+        if (nb > 0)
+        {
+            std::uniform_int_distribution<unsigned int> uniform_dist(0, nb - 1);
+            rand = uniform_dist(m_randGen);
+            it->simulatePlayout(rand, g);
+        }
+
+        cur.push_back(rand);
+    }
+
+    int test = g.fitness();
+
+    if (test > m_fitness)
+    {
+        m_fitness = test;
+        m_solution = cur;
+        debug("Solution upgraded: " + std::to_string(m_fitness));
+    }
+}
+
+
+
+void World::perform()
+{
+    if (m_teammates.size() != m_solution.size())
+    {
+        error("number of teammates != solution size");
+        return;
+    }
+
+    std::vector<Teammate>::iterator it;
+    std::vector<int>::const_iterator n;
+
+    for (
+            it = m_teammates.begin(), n = m_solution.begin();
+            it != m_teammates.end();
+            it++, n++
+        )
+    {
+        if (*n >= 0)
+        {
+            it->performPlayout(*n);
         }
     }
 }

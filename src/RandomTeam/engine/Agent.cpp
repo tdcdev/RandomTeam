@@ -233,8 +233,7 @@ unsigned int Agent::nbPlayouts() const
 
 bool Agent::simulatePlayout(
         unsigned int index,
-        const SimulationGraph& graph,
-        SimulationGraph& result
+        SimulationGraph& graph
         ) const
 {
     if (index >= m_playouts.size())
@@ -246,7 +245,7 @@ bool Agent::simulatePlayout(
     Playout playout = m_playouts[index];
     ActionSimulator sim = std::get<1>(playout.first);
 
-    return sim(*this, playout.second, graph, result);
+    return sim(*this, playout.second, graph);
 }
 
 
@@ -258,7 +257,7 @@ void Agent::setTeam(const std::string& team)
 
 
 
-void Agent::setPosition(std::string& position)
+void Agent::setPosition(const std::string& position)
 {
     m_position = position;
 }
@@ -342,7 +341,7 @@ void Agent::generatePlayouts(const SimulationGraph& graph)
     for (
             ActionsVector::const_iterator action = m_actions.begin();
             action != m_actions.end();
-            ++action
+            action++
         )
     {
         ActionGenerator gen = std::get<0>(*action);
@@ -353,7 +352,7 @@ void Agent::generatePlayouts(const SimulationGraph& graph)
         for (
                 std::vector<std::string>::const_iterator param = params.begin();
                 param != params.end();
-                ++param
+                param++
             )
         {
             m_playouts.push_back(Playout(*action, *param));

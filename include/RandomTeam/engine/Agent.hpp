@@ -74,11 +74,10 @@ class Agent
         unsigned int nbPlayouts() const;
         bool simulatePlayout(
                 unsigned int index,
-                const SimulationGraph& graph,
-                SimulationGraph& result
+                SimulationGraph& graph
                 ) const;
         void setTeam(const std::string& team);
-        void setPosition(std::string& position);
+        void setPosition(const std::string& position);
         void setRole(Agent::Role role);
         void setEnergy(int energy);
         void setHealth(int health);

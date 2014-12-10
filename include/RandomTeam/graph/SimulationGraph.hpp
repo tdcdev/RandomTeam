@@ -76,6 +76,8 @@ class SimulationGraph
                 const std::vector<Agent>& opponents
                 );
         void setupAgents();
+        float graphFitness() const;
+        float teammatesFitness() const;
         float fitness() const;
 
     private:
@@ -91,8 +93,9 @@ class SimulationGraph
         typedef BGraph::vertex_iterator VertexIterator;
         typedef BGraph::edge_descriptor Edge;
         typedef BGraph::edge_iterator EdgeIterator;
+        typedef std::pair<VertexIterator, VertexIterator> VerticesIterator;
+        typedef std::pair<EdgeIterator, EdgeIterator> EdgesIterator;
         typedef std::map<std::string, Vertex> VerticesMap;
-        typedef std::pair<VertexIterator, VertexIterator> VerticesMapIterator;
 
         BGraph m_graph;
         VerticesMap m_vertices;

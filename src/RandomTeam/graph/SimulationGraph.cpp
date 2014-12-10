@@ -45,7 +45,7 @@ SimulationGraph::SimulationGraph(const SimulationGraph& sg):
     m_opponents(sg.m_opponents)
 {
     for (
-            VerticesMapIterator it = boost::vertices(m_graph);
+            VerticesIterator it = boost::vertices(m_graph);
             it.first != it.second;
             it.first++
         )
@@ -67,7 +67,7 @@ SimulationGraph& SimulationGraph::operator=(const SimulationGraph& sg)
     m_opponents = sg.m_opponents;
 
     for (
-            VerticesMapIterator it = boost::vertices(m_graph);
+            VerticesIterator it = boost::vertices(m_graph);
             it.first != it.second;
             it.first++
         )
@@ -260,7 +260,7 @@ void SimulationGraph::setAgents(
 void SimulationGraph::setupAgents()
 {
     for (
-            VerticesMapIterator it = boost::vertices(m_graph);
+            VerticesIterator it = boost::vertices(m_graph);
             it.first != it.second;
             it.first++
         )
@@ -300,21 +300,43 @@ void SimulationGraph::setupAgents()
 
 
 
-float SimulationGraph::fitness() const
+float SimulationGraph::graphFitness() const
 {
-    float count = 0.f;
+    float exploration = 0.f;
+    float vertices = 0.f;
+    float edges = 0.f;
 
     for (
-            VerticesMapIterator it = boost::vertices(m_graph);
+            VerticesIterator it = boost::vertices(m_graph);
             it.first != it.second;
             it.first++
         )
     {
         if (m_graph[*it.first].m_visited)
         {
-            count += 1.f;
+            exploration += 3.f;
         }
+
+        vertices += m_graph[*it.first].m_value;
     }
+
+    for (
+            EdgesIterator it = boost::edges(m_graph);
+            it.first != it.second;
+            it.first++
+        )
+    {
+        edges += m_graph[*it.first].m_weight;
+    }
+
+    return exploration + vertices + edges;
+}
+
+
+
+float SimulationGraph::teammatesFitness() const
+{
+    float energy = 0.f;
 
     for (
         std::vector<Agent>::const_iterator it = m_teammates.begin();
@@ -322,11 +344,18 @@ float SimulationGraph::fitness() const
         it++
         )
     {
-        if (it->energy() < it->maxEnergy() / 3)
+        if (it->energy() < it->maxEnergy() / 2)
         {
-            count -= 3;
+            energy -= 5;
         }
     }
 
-    return count;
+    return energy;
+}
+
+
+
+float SimulationGraph::fitness() const
+{
+    return this->graphFitness() + this->teammatesFitness();
 }

@@ -1,13 +1,12 @@
 cmake_minimum_required(VERSION 2.8.9)
 
-# setup default variables
-set(CMAKE_BUILD_TYPE Debug CACHE STRING "")
-
 # setup project
 project(RandomTeam)
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Debug")
+endif()
 set(VERSION_MAJOR 0)
-set(VERSION_MINOR 1)
-set(BUILD_TYPE ${CMAKE_BUILD_TYPE})
+set(VERSION_MINOR 2)
 set(RESOURCES_DIR ${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME})
 
 # setup module path
@@ -18,7 +17,6 @@ include(CMakeParseArguments)
 include(CMakeMacros)
 
 # setup CXX flags
-set(CMAKE_CXX_FLAGS "-std=c++11 -g -Wall")
 set(CMAKE_CXX_FLAGS_DEBUG "-std=c++11 -g -Wall")
 set(CMAKE_CXX_FLAGS_RELEASE "-std=c++11")
 
@@ -26,14 +24,10 @@ set(CMAKE_CXX_FLAGS_RELEASE "-std=c++11")
 set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-# setup configuration headers
+# setup version header
 configure_file(
     ${CMAKE_SOURCE_DIR}/config/version.h.in
     ${CMAKE_BINARY_DIR}/include/${PROJECT_NAME}/version.h
-    )
-configure_file(
-    ${CMAKE_SOURCE_DIR}/config/config.h.in
-    ${CMAKE_BINARY_DIR}/include/${PROJECT_NAME}/config.h
     )
 
 # setup definitions

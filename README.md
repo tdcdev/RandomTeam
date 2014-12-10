@@ -1,6 +1,12 @@
 RandomTeam
 ==========
 
+Description
+-----------
+
+This C++ program allows to play a tournament at the [Multi-Agent Programming
+Contest](https://multiagentcontest.org/).
+
 Build
 -----
 

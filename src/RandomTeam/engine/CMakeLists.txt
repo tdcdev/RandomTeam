@@ -4,5 +4,4 @@ add_project_library(
     engine
     SOURCES ${sources}
     DEPENDS ${Boost_LIBRARIES} graph tinyxml2
-    DEST lib
     )

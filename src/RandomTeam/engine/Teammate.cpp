@@ -538,7 +538,7 @@ void Teammate::requestactionProbedVertices(tinyxml2::XMLElement* perception)
 
             if (getXMLAttributes(v, attributes, values))
             {
-                /* TODO */
+                m_world->updateVertex(values[0], std::stoi(values[1]));
             }
 
             v = v->NextSiblingElement("probedVertex");
@@ -563,7 +563,7 @@ void Teammate::requestactionSurveyedEdges(tinyxml2::XMLElement* perception)
 
             if (getXMLAttributes(e, attributes, values))
             {
-                /* TODO */
+                m_world->updateEdge(values[0], values[1], std::stoi(values[2]));
             }
 
             e = e->NextSiblingElement("surveyedEdge");

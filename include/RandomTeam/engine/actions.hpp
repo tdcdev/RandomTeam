@@ -36,7 +36,6 @@
 
 
 
-
 typedef void (*ActionGenerator)(
         const Agent&,
         const SimulationGraph&,
@@ -55,7 +54,6 @@ typedef std::vector<Playout> PlayoutsVector;
 
 
 
-
 void rechargeGenerator(
         const Agent& agent,
         const SimulationGraph& graph,
@@ -64,7 +62,17 @@ void rechargeGenerator(
 void gotoGenerator(
         const Agent& agent,
         const SimulationGraph& graph,
-        std::vector<std::string>& param
+        std::vector<std::string>& params
+        );
+void surveyGenerator(
+        const Agent& agent,
+        const SimulationGraph& graph,
+        std::vector<std::string>& params
+        );
+void probeGenerator(
+        const Agent& agent,
+        const SimulationGraph& graph,
+        std::vector<std::string>& params
         );
 bool rechargeSimulator(
         const Agent& agent,
@@ -76,8 +84,20 @@ bool gotoSimulator(
         const std::string& param,
         SimulationGraph& graph
         );
+bool surveySimulator(
+        const Agent& agent,
+        const std::string& param,
+        SimulationGraph& graph
+        );
+bool probeSimulator(
+        const Agent& agent,
+        const std::string& param,
+        SimulationGraph& graph
+        );
 void rechargePerformer(Teammate& teammate, const std::string& param);
 void gotoPerformer(Teammate& teammate, const std::string& param);
+void surveyPerformer(Teammate& teammate, const std::string& param);
+void probePerformer(Teammate& teammate, const std::string& param);
 
 
 

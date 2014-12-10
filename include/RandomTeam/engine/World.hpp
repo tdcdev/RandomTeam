@@ -70,6 +70,8 @@ class World
         void seeAgent(const Agent& agent);
         void addVertex(const std::string& id, const std::string& team);
         void addEdge(const std::string& n1, const std::string& n2);
+        void updateVertex(const std::string& id, int v);
+        void updateEdge(const std::string& n1, const std::string& n2, int w);
         bool loadTeam(const std::string& file);
         void clear();
         void generateAllPlayouts();

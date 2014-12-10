@@ -293,6 +293,30 @@ void World::addEdge(const std::string& n1, const std::string& n2)
 
 
 
+void World::updateVertex(const std::string& id, int v)
+{
+    VertexInfos *vertex = m_graph.vertex(id);
+
+    if (vertex != nullptr)
+    {
+        vertex->m_value = v;
+    }
+}
+
+
+
+void World::updateEdge(const std::string& n1, const std::string& n2, int w)
+{
+    EdgeInfos *edge = m_graph.edge(n1, n2);
+
+    if (edge != nullptr)
+    {
+        edge->m_weight = w;
+    }
+}
+
+
+
 bool World::loadTeam(const std::string& file)
 {
     tinyxml2::XMLDocument doc;

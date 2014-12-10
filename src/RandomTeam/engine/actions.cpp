@@ -50,9 +50,7 @@ void gotoGenerator(
         )
 {
     std::vector<const VertexInfos*> vertices;
-    const VertexInfos* vertex;
-
-    vertex = graph.vertex(agent.position());
+    const VertexInfos* vertex = graph.vertex(agent.position());
 
     if (vertex != nullptr)
     {
@@ -64,7 +62,67 @@ void gotoGenerator(
             it++
             )
         {
-            params.push_back((*it)->m_id);
+            const EdgeInfos* edge = graph.edge(vertex->m_id, (*it)->m_id);
+
+            if (edge != nullptr && edge->m_weight <= agent.energy())
+            {
+                params.push_back((*it)->m_id);
+            }
+        }
+    }
+}
+
+
+
+void surveyGenerator(
+        const Agent& agent,
+        const SimulationGraph& graph,
+        std::vector<std::string>& params
+        )
+{
+    if (agent.energy() < 1)
+    {
+        return;
+    }
+
+    params.push_back("");
+}
+
+
+
+void probeGenerator(
+        const Agent& agent,
+        const SimulationGraph& graph,
+        std::vector<std::string>& params
+        )
+{
+    if (agent.energy() < 1 || agent.role() != Agent::Role::EXPLORER)
+    {
+        return;
+    }
+
+    std::vector<const VertexInfos*> vertices;
+    const VertexInfos* vertex = graph.vertex(agent.position());
+
+    if (vertex != nullptr)
+    {
+        graph.getNeighbors(vertex->m_id, vertices);
+
+        for (
+            std::vector<const VertexInfos*>::iterator it = vertices.begin();
+            it != vertices.end();
+            it++
+            )
+        {
+            if ((*it)->m_value == 1)
+            {
+                params.push_back((*it)->m_id);
+            }
+        }
+
+        if (vertex->m_value == 1)
+        {
+            params.push_back(vertex->m_id);
         }
     }
 }
@@ -128,6 +186,61 @@ bool gotoSimulator(
 
 
 
+bool surveySimulator(
+        const Agent& agent,
+        const std::string& param,
+        SimulationGraph& graph
+        )
+{
+    Agent* newAgent = graph.teammate(agent.id());
+    std::vector<const VertexInfos*> vertices;
+    const VertexInfos* vertex = graph.vertex(agent.position());
+
+    if (vertex == nullptr)
+    {
+        return false;
+    }
+
+    graph.getNeighbors(vertex->m_id, vertices);
+
+    for (
+            std::vector<const VertexInfos*>::iterator it = vertices.begin();
+            it != vertices.end();
+            it++
+        )
+    {
+        EdgeInfos* edge = graph.edge(vertex->m_id, (*it)->m_id);
+
+        if (edge != nullptr)
+        {
+            edge->m_weight = 5.f;
+        }
+    }
+
+    newAgent->setEnergy(newAgent->energy() - 1);
+
+    return true;
+}
+
+
+
+bool probeSimulator(
+        const Agent& agent,
+        const std::string& param,
+        SimulationGraph& graph
+        )
+{
+    Agent* newAgent = graph.teammate(agent.id());
+    VertexInfos* vertex = graph.vertex(param);
+
+    newAgent->setEnergy(newAgent->energy() - 1);
+    vertex->m_value = 5.f;
+
+    return true;
+}
+
+
+
 void rechargePerformer(Teammate& teammate, const std::string& param)
 {
     teammate.setActionOrder("recharge", param);
@@ -138,4 +251,18 @@ void rechargePerformer(Teammate& teammate, const std::string& param)
 void gotoPerformer(Teammate& teammate, const std::string& param)
 {
     teammate.setActionOrder("goto", param);
+}
+
+
+
+void surveyPerformer(Teammate& teammate, const std::string& param)
+{
+    teammate.setActionOrder("survey", param);
+}
+
+
+
+void probePerformer(Teammate& teammate, const std::string& param)
+{
+    teammate.setActionOrder("probe", param);
 }

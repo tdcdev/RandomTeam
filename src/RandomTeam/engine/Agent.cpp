@@ -58,6 +58,16 @@ Agent::Agent(const std::string& id):
                 gotoGenerator, gotoSimulator, gotoPerformer
                 )
             );
+    m_actions.push_back(
+            Action(
+                surveyGenerator, surveySimulator, surveyPerformer
+                )
+            );
+    m_actions.push_back(
+            Action(
+                probeGenerator, probeSimulator, probePerformer
+                )
+            );
 }
 
 

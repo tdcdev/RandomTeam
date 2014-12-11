@@ -30,11 +30,16 @@
 #include <RandomTeam/engine/World.hpp>
 #include <RandomTeam/engine/Clock.hpp>
 #include <RandomTeam/RandomTeam/tools.hpp>
+#include <thread>
+
+
+
+std::random_device rd;
+std::mt19937 World::s_randGen(rd());
 
 
 
 World::World():
-    m_randGen(std::random_device()()),
     m_running(true),
     m_started(false),
     m_simulationId(""),
@@ -375,6 +380,7 @@ void World::clear()
 void World::generateAllPlayouts()
 {
     m_graph.setAgents(m_teammates, m_opponents);
+    m_solution.clear();
     m_fitness = std::numeric_limits<float>::min();
 
     for (
@@ -384,48 +390,86 @@ void World::generateAllPlayouts()
         )
     {
         it->generatePlayouts(m_graph);
+        unsigned int nb = it->nbPlayouts();
+        int rand = -1;
+
+        if (nb > 0)
+        {
+            std::uniform_int_distribution<unsigned int> dist(0, nb - 1);
+            rand = dist(s_randGen);
+        }
+
+        m_solution.push_back(rand);
     }
 }
 
 
 
-void World::think()
+void World::thinkThread(const std::vector<int>& solution, float& score) const
+{
+    SimulationGraph g(m_graph);
+    int i = 0;
+
+    for (
+            std::vector<Teammate>::const_iterator it = m_teammates.begin();
+            it != m_teammates.end();
+            it++, i++
+        )
+    {
+        if (solution[i] > 0)
+        {
+            it->simulatePlayout(solution[i], g);
+        }
+    }
+
+    score = g.fitness();
+}
+
+
+
+void World::think(unsigned int nbThreads)
 {
     if (!m_started)
     {
         return;
     }
 
-    std::vector<int> cur;
-    std::vector<Teammate>::const_iterator it;
-    SimulationGraph g(m_graph);
-
-    for (
-            it = m_teammates.begin();
-            it != m_teammates.end();
-            it++
-        )
+    if (m_teammates.size() != m_solution.size())
     {
-        unsigned int nb = it->nbPlayouts();
-        int rand = -1;
-
-        if (nb > 0)
-        {
-            std::uniform_int_distribution<unsigned int> uniform_dist(0, nb - 1);
-            rand = uniform_dist(m_randGen);
-            it->simulatePlayout(rand, g);
-        }
-
-        cur.push_back(rand);
+        error("number of teammates != solution size");
+        return;
     }
 
-    int test = g.fitness();
+    std::vector< std::shared_ptr<std::thread> > threads;
+    std::vector< std::vector<int> > solutions(nbThreads);
+    std::vector<float> scores(nbThreads);
 
-    if (test > m_fitness)
+    threads.assign(nbThreads, nullptr);
+
+    for (unsigned int i = 0; i < nbThreads; i++)
     {
-        m_fitness = test;
-        m_solution = cur;
-        debug("Solution upgraded: " + std::to_string(m_fitness));
+        World::mutate(m_solution, m_teammates, solutions[i]);
+
+        threads[i].reset(
+                new std::thread(
+                    &World::thinkThread,
+                    this,
+                    std::ref(solutions[i]),
+                    std::ref(scores[i])
+                    )
+                );
+    }
+
+    for (unsigned int i = 0; i < nbThreads; i++)
+    {
+        threads[i]->join();
+
+        if (scores[i] > m_fitness)
+        {
+            m_fitness = scores[i];
+            m_solution = solutions[i];
+            debug("Solution upgraded: " + std::to_string(m_fitness));
+        }
     }
 }
 
@@ -452,5 +496,41 @@ void World::perform()
         {
             it->performPlayout(*n);
         }
+    }
+}
+
+
+
+void World::mutate(
+        const std::vector<int>& solution,
+        const std::vector<Teammate>& teammates,
+        std::vector<int>& mutate
+        )
+{
+    mutate.clear();
+
+    for (
+            std::vector<Teammate>::const_iterator it = teammates.begin();
+            it != teammates.end();
+            it++
+        )
+    {
+        unsigned int nb = it->nbPlayouts();
+        int rand = -1;
+
+        if (nb > 0)
+        {
+            std::uniform_int_distribution<int> dist(-1, 1);
+            rand += dist(s_randGen);
+
+            while (rand < 0)
+            {
+                rand += nb;
+            }
+
+            rand %= nb;
+        }
+
+        mutate.push_back(rand);
     }
 }

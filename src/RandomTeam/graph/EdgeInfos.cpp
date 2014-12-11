@@ -32,7 +32,7 @@
 
 
 EdgeInfos::EdgeInfos():
-    m_weight(1)
+    m_weight(0)
 {
 
 }

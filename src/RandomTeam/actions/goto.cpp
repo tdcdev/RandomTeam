@@ -39,6 +39,11 @@ void gotoGenerator(
         std::vector<std::string>& params
         )
 {
+    if (agent.energy() < 1)
+    {
+        return;
+    }
+
     std::vector<const VertexInfos*> vertices;
     const VertexInfos* vertex = graph.vertex(agent.position());
 

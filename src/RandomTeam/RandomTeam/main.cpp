@@ -38,6 +38,7 @@
 std::string g_team;
 std::string g_host;
 unsigned int g_port;
+unsigned int g_threads;
 unsigned int g_attempts;
 
 
@@ -64,6 +65,11 @@ boost::program_options::options_description createOptionsDescription()
          "port",
          bpo::value<unsigned int>(&g_port)->default_value(12300),
          "host port"
+        )
+        (
+         "threads",
+         bpo::value<unsigned int>(&g_threads)->default_value(2),
+         "number of threads used"
         )
         (
          "attempts",
@@ -140,7 +146,7 @@ int main(int argc, char** argv)
             nbThink = 0;
         }
 
-        world.think();
+        world.think(g_threads);
         nbThink++;
 
         if (write && world.remainingTime() > 0 && world.remainingTime() < 150)
@@ -148,7 +154,7 @@ int main(int argc, char** argv)
             write = false;
             world.perform();
             serverInterface.writeClients();
-            info("Think calls: " + std::to_string(nbThink));
+            info("Think calls: " + std::to_string(nbThink * g_threads));
         }
     }
 

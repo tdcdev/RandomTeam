@@ -44,7 +44,33 @@ void surveyGenerator(
         return;
     }
 
-    params.push_back("");
+    std::vector<const VertexInfos*> vertices;
+    const VertexInfos* vertex = graph.vertex(agent.position());
+
+    if (vertex == nullptr)
+    {
+        return;
+    }
+
+    graph.getNeighbors(vertex->m_id, vertices);
+
+    for (
+            std::vector<const VertexInfos*>::iterator it = vertices.begin();
+            it != vertices.end();
+            it++
+        )
+    {
+        const EdgeInfos* edge = graph.edge(vertex->m_id, (*it)->m_id);
+
+        if (edge != nullptr)
+        {
+            if (edge->m_weight == 0)
+            {
+                params.push_back("");
+                return;
+            }
+        }
+    }
 }
 
 

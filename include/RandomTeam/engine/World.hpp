@@ -75,12 +75,19 @@ class World
         bool loadTeam(const std::string& file);
         void clear();
         void generateAllPlayouts();
-        void think();
+        void thinkThread(const std::vector<int>& solution, float& score) const;
+        void think(unsigned int nbThreads);
         void perform();
+        static void mutate(
+                const std::vector<int>& solution,
+                const std::vector<Teammate>& teammates,
+                std::vector<int>& mutate
+                );
 
     private:
 
-        std::mt19937 m_randGen;
+        static std::mt19937 s_randGen;
+
         SimulationGraph m_graph;
         std::vector<Teammate> m_teammates;
         std::vector<Agent> m_opponents;

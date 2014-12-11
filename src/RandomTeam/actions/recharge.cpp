@@ -39,6 +39,11 @@ void rechargeGenerator(
         std::vector<std::string>& params
         )
 {
+    if (agent.energy() > agent.maxEnergy() / 2)
+    {
+        return;
+    }
+
     params.push_back("");
 }
 

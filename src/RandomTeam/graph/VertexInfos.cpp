@@ -35,7 +35,7 @@
 
 VertexInfos::VertexInfos():
     m_id(""),
-    m_value(1),
+    m_value(0),
     m_team("none"),
     m_visited(false)
 {
@@ -59,7 +59,7 @@ VertexInfos::VertexInfos(const VertexInfos& infos):
 
 VertexInfos::VertexInfos(const std::string& id):
     m_id(id),
-    m_value(1),
+    m_value(0),
     m_team("none"),
     m_visited(false)
 {

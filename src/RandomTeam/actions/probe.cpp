@@ -57,13 +57,13 @@ void probeGenerator(
             it++
             )
         {
-            if ((*it)->m_value == 1)
+            if ((*it)->m_value == 0)
             {
                 params.push_back((*it)->m_id);
             }
         }
 
-        if (vertex->m_value == 1)
+        if (vertex->m_value == 0)
         {
             params.push_back(vertex->m_id);
         }

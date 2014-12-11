@@ -33,7 +33,7 @@
 
 
 #include <string>
-#include <RandomTeam/engine/actions.hpp>
+#include <RandomTeam/actions/actions.hpp>
 #include <RandomTeam/graph/SimulationGraph.hpp>
 
 

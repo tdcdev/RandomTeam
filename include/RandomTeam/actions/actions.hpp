@@ -33,6 +33,10 @@
 
 
 #include <RandomTeam/graph/SimulationGraph.hpp>
+#include <RandomTeam/actions/recharge.hpp>
+#include <RandomTeam/actions/goto.hpp>
+#include <RandomTeam/actions/survey.hpp>
+#include <RandomTeam/actions/probe.hpp>
 
 
 
@@ -51,53 +55,6 @@ typedef std::tuple<ActionGenerator, ActionSimulator, ActionPerformer> Action;
 typedef std::vector<Action> ActionsVector;
 typedef std::pair<Action, std::string> Playout;
 typedef std::vector<Playout> PlayoutsVector;
-
-
-
-void rechargeGenerator(
-        const Agent& agent,
-        const SimulationGraph& graph,
-        std::vector<std::string>& params
-        );
-void gotoGenerator(
-        const Agent& agent,
-        const SimulationGraph& graph,
-        std::vector<std::string>& params
-        );
-void surveyGenerator(
-        const Agent& agent,
-        const SimulationGraph& graph,
-        std::vector<std::string>& params
-        );
-void probeGenerator(
-        const Agent& agent,
-        const SimulationGraph& graph,
-        std::vector<std::string>& params
-        );
-bool rechargeSimulator(
-        const Agent& agent,
-        const std::string& param,
-        SimulationGraph& graph
-        );
-bool gotoSimulator(
-        const Agent& agent,
-        const std::string& param,
-        SimulationGraph& graph
-        );
-bool surveySimulator(
-        const Agent& agent,
-        const std::string& param,
-        SimulationGraph& graph
-        );
-bool probeSimulator(
-        const Agent& agent,
-        const std::string& param,
-        SimulationGraph& graph
-        );
-void rechargePerformer(Teammate& teammate, const std::string& param);
-void gotoPerformer(Teammate& teammate, const std::string& param);
-void surveyPerformer(Teammate& teammate, const std::string& param);
-void probePerformer(Teammate& teammate, const std::string& param);
 
 
 

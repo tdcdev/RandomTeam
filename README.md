@@ -7,6 +7,11 @@ Description
 This C++ program allows to play a tournament at the [Multi-Agent Programming
 Contest](https://multiagentcontest.org/).
 
+This contest consisted of applying existing or implementing a new multi-agent
+system to solve a cooperative task in a highly dynamic environment. In this
+environment, represented as a graph, the goal of an agent team is to find and
+occupy the best zones.
+
 Build
 -----
 

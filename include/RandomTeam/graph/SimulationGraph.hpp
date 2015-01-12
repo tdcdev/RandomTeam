@@ -50,6 +50,7 @@ class SimulationGraph
         SimulationGraph& operator=(const SimulationGraph& sg);
         virtual ~SimulationGraph();
         const Agent* teammate(const std::string& id) const;
+        const Agent* opponent(const std::string& id) const;
         const VertexInfos* vertex(const std::string& id) const;
         const EdgeInfos* edge(
                 const std::string& n1,
@@ -60,6 +61,7 @@ class SimulationGraph
                 std::vector<const VertexInfos*>& neighbors
                 ) const;
         Agent* teammate(const std::string& id);
+        Agent* opponent(const std::string& id);
         VertexInfos* vertex(const std::string& id);
         EdgeInfos* edge(const std::string& n1, const std::string& n2);
         VertexInfos* addVertex(const std::string& id);
@@ -78,6 +80,7 @@ class SimulationGraph
         void setupAgents();
         float graphFitness() const;
         float teammatesFitness() const;
+        float opponentsFitness() const;
         float fitness() const;
 
     private:

@@ -68,6 +68,11 @@ Agent::Agent(const std::string& id):
                 probeGenerator, probeSimulator, probePerformer
                 )
             );
+    m_actions.push_back(
+            Action(
+                attackGenerator, attackSimulator, attackPerformer
+                )
+            );
 }
 
 

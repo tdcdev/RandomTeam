@@ -110,6 +110,25 @@ const Agent* SimulationGraph::teammate(const std::string& id) const
 
 
 
+const Agent* SimulationGraph::opponent(const std::string& id) const
+{
+    for (
+        std::vector<Agent>::const_iterator it = m_opponents.begin();
+        it != m_opponents.end();
+        it++
+        )
+    {
+        if (it->id() == id)
+        {
+            return &(*it);
+        }
+    }
+
+    return nullptr;
+}
+
+
+
 const VertexInfos* SimulationGraph::vertex(const std::string& id) const
 {
     if (m_vertices.find(id) == m_vertices.end())
@@ -174,6 +193,15 @@ Agent* SimulationGraph::teammate(const std::string& id)
 {
     return const_cast<Agent*>(
             static_cast<const SimulationGraph&>(*this).teammate(id)
+            );
+}
+
+
+
+Agent* SimulationGraph::opponent(const std::string& id)
+{
+    return const_cast<Agent*>(
+            static_cast<const SimulationGraph&>(*this).opponent(id)
             );
 }
 
@@ -337,6 +365,7 @@ float SimulationGraph::graphFitness() const
 float SimulationGraph::teammatesFitness() const
 {
     float energy = 0.f;
+    float health = 0.f;
 
     for (
         std::vector<Agent>::const_iterator it = m_teammates.begin();
@@ -348,14 +377,37 @@ float SimulationGraph::teammatesFitness() const
         {
             energy -= 5;
         }
+
+        health += it->health();
     }
 
-    return energy;
+    return energy + health;
+}
+
+
+
+float SimulationGraph::opponentsFitness() const
+{
+    float health = 0.f;
+
+    for (
+        std::vector<Agent>::const_iterator it = m_opponents.begin();
+        it != m_opponents.end();
+        it++
+        )
+    {
+            health += it->health();
+    }
+
+    return -health;
 }
 
 
 
 float SimulationGraph::fitness() const
 {
-    return this->graphFitness() + this->teammatesFitness();
+    return 
+        this->graphFitness() + 
+        this->teammatesFitness() + 
+        this->opponentsFitness();
 }

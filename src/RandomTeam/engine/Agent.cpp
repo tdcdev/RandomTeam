@@ -73,6 +73,11 @@ Agent::Agent(const std::string& id):
                 attackGenerator, attackSimulator, attackPerformer
                 )
             );
+    m_actions.push_back(
+            Action(
+                parryGenerator, parrySimulator, parryPerformer
+                )
+            );
 }
 
 

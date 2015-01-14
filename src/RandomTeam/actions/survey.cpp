@@ -102,7 +102,7 @@ bool surveySimulator(
 
         if (edge != nullptr)
         {
-            edge->m_weight = 5.f;
+            edge->m_weight = 1.f;
         }
     }
 

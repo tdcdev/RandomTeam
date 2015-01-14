@@ -82,7 +82,7 @@ bool probeSimulator(
     VertexInfos* vertex = graph.vertex(param);
 
     newAgent->setEnergy(newAgent->energy() - 1);
-    vertex->m_value = 5.f;
+    vertex->m_value = 1.f;
 
     return true;
 }

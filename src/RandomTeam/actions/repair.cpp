@@ -54,9 +54,7 @@ void repairGenerator(
 
     if (vertex != nullptr)
     {
-        // failed in range even at distance 3
         // graph.getNeighbors(vertex->m_id, vertices);
-
         vertices.push_back(vertex);
 
         for (

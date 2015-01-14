@@ -54,9 +54,7 @@ void attackGenerator(
 
     if (vertex != nullptr)
     {
-        // failed in range even at distance 3
         // graph.getNeighbors(vertex->m_id, vertices);
-
         vertices.push_back(vertex);
 
         for (
@@ -75,6 +73,11 @@ void attackGenerator(
             {
                 const std::string pos = (*opp)->position();
                 const EdgeInfos* edge = graph.edge(agent.position(), pos);
+
+                if (!(*opp)->isEnable())
+                {
+                    continue;
+                }
 
                 if (edge != nullptr || agent.position() == pos)
                 {
@@ -102,7 +105,7 @@ bool attackSimulator(
     }
 
     newAgent->setEnergy(newAgent->energy() - 2);
-    newOpp->setHealth(newOpp->health() - 10);
+    newOpp->setHealth(newOpp->health() - newAgent->strength());
 
     return true;
 }

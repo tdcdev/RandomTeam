@@ -65,7 +65,7 @@ class SimulationGraph
         VertexInfos* vertex(const std::string& id);
         EdgeInfos* edge(const std::string& n1, const std::string& n2);
         VertexInfos* addVertex(
-                const std::string& id, 
+                const std::string& id,
                 long long int deadline
                 );
         EdgeInfos* addEdge(
@@ -102,6 +102,8 @@ class SimulationGraph
         typedef std::pair<VertexIterator, VertexIterator> VerticesIterator;
         typedef std::pair<EdgeIterator, EdgeIterator> EdgesIterator;
         typedef std::map<std::string, Vertex> VerticesMap;
+
+        float vertexScore(Vertex v) const;
 
         BGraph m_graph;
         VerticesMap m_vertices;

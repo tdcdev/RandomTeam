@@ -280,8 +280,8 @@ void World::seeAgent(const Agent& agent)
 
 
 void World::addVertex(
-        const std::string& id, 
-        const std::string& team, 
+        const std::string& id,
+        const std::string& team,
         long long int deadline
         )
 {

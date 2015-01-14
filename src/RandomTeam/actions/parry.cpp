@@ -40,8 +40,8 @@ void parryGenerator(
         )
 {
     if (
-            agent.role() != Agent::Role::SENTINEL && 
-            agent.role() != Agent::Role::SABOTEUR && 
+            agent.role() != Agent::Role::SENTINEL &&
+            agent.role() != Agent::Role::SABOTEUR &&
             agent.role() != Agent::Role::REPAIRER
             )
     {
@@ -58,9 +58,7 @@ void parryGenerator(
 
     if (vertex != nullptr)
     {
-        // failed in range even at distance 3
         // graph.getNeighbors(vertex->m_id, vertices);
-
         vertices.push_back(vertex);
 
         for (
@@ -79,6 +77,11 @@ void parryGenerator(
             {
                 const std::string pos = (*opp)->position();
                 const EdgeInfos* edge = graph.edge(agent.position(), pos);
+
+                if ((*opp)->role() != Agent::Role::SABOTEUR)
+                {
+                    continue;
+                }
 
                 if (edge != nullptr || agent.position() == pos)
                 {

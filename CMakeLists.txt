@@ -6,7 +6,7 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Debug")
 endif()
 set(VERSION_MAJOR 0)
-set(VERSION_MINOR 2)
+set(VERSION_MINOR 3)
 set(RESOURCES_DIR ${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME})
 
 # setup module path

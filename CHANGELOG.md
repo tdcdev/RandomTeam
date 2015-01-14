@@ -1,5 +1,14 @@
-0.2 (unreleased)
+0.3 (unreleased)
 ----------------
+
+0.2 (2015-01-14)
+----------------
+
+Features:
+
+- area representation
+- multithreaded decision algorithm
+- agent actions: attack, parry, repair
 
 0.1 (2014-12-10)
 ----------------

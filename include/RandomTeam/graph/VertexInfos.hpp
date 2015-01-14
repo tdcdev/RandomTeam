@@ -59,6 +59,7 @@ class VertexInfos
         int m_value;
         std::string m_team;
         bool m_visited;
+        long long int m_deadline;
 
 };
 

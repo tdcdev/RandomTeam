@@ -279,9 +279,13 @@ void World::seeAgent(const Agent& agent)
 
 
 
-void World::addVertex(const std::string& id, const std::string& team)
+void World::addVertex(
+        const std::string& id, 
+        const std::string& team, 
+        long long int deadline
+        )
 {
-    VertexInfos *vertex = m_graph.addVertex(id);
+    VertexInfos *vertex = m_graph.addVertex(id, deadline);
 
     if (vertex != nullptr)
     {

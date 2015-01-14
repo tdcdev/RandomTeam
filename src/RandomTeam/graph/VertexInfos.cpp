@@ -29,6 +29,7 @@
 
 #include <RandomTeam/graph/VertexInfos.hpp>
 #include <RandomTeam/engine/Agent.hpp>
+#include <RandomTeam/engine/Clock.hpp>
 
 
 
@@ -37,7 +38,8 @@ VertexInfos::VertexInfos():
     m_id(""),
     m_value(0),
     m_team("none"),
-    m_visited(false)
+    m_visited(false),
+    m_deadline(0)
 {
 
 }
@@ -50,7 +52,8 @@ VertexInfos::VertexInfos(const VertexInfos& infos):
     m_id(infos.m_id),
     m_value(infos.m_value),
     m_team(infos.m_team),
-    m_visited(infos.m_visited)
+    m_visited(infos.m_visited),
+    m_deadline(infos.m_deadline)
 {
 
 }
@@ -61,7 +64,8 @@ VertexInfos::VertexInfos(const std::string& id):
     m_id(id),
     m_value(0),
     m_team("none"),
-    m_visited(false)
+    m_visited(false),
+    m_deadline(0)
 {
 
 }
@@ -76,6 +80,7 @@ VertexInfos& VertexInfos::operator=(const VertexInfos& infos)
     m_value = infos.m_value;
     m_team = infos.m_team;
     m_visited = infos.m_visited;
+    m_deadline = infos.m_deadline;
 
     return *this;
 }
@@ -84,6 +89,13 @@ VertexInfos& VertexInfos::operator=(const VertexInfos& infos)
 
 void VertexInfos::clear()
 {
+    long long int diff = m_deadline - Clock::now();
+
     m_teammates.clear();
     m_opponents.clear();
+
+    if (diff < 0)
+    {
+        m_team = "none";
+    }
 }

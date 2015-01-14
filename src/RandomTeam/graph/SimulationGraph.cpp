@@ -225,12 +225,17 @@ EdgeInfos* SimulationGraph::edge(const std::string& n1, const std::string& n2)
 
 
 
-VertexInfos* SimulationGraph::addVertex(const std::string& id)
+VertexInfos* SimulationGraph::addVertex(
+        const std::string& id, 
+        long long int deadline
+        )
 {
     if (m_vertices.find(id) == m_vertices.end())
     {
         m_vertices[id] = boost::add_vertex(VertexInfos(id), m_graph);
     }
+
+    m_graph[m_vertices[id]].m_deadline = deadline;
 
     return &m_graph[m_vertices[id]];
 }
@@ -242,8 +247,8 @@ EdgeInfos* SimulationGraph::addEdge(
         const std::string& n2
         )
 {
-    this->addVertex(n1);
-    this->addVertex(n2);
+    this->addVertex(n1, 0);
+    this->addVertex(n2, 0);
     Edge edge = boost::add_edge(m_vertices[n1], m_vertices[n2], m_graph).first;
 
     return &m_graph[edge];

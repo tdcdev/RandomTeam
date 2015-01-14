@@ -452,7 +452,7 @@ void Teammate::requestactionVisibleVertices(tinyxml2::XMLElement* perception)
 
             if (getXMLAttributes(v, attributes, values))
             {
-                m_world->addVertex(values[0], values[1]);
+                m_world->addVertex(values[0], values[1], m_deadline);
             }
 
             v = v->NextSiblingElement("visibleVertex");

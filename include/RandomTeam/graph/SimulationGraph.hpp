@@ -64,7 +64,10 @@ class SimulationGraph
         Agent* opponent(const std::string& id);
         VertexInfos* vertex(const std::string& id);
         EdgeInfos* edge(const std::string& n1, const std::string& n2);
-        VertexInfos* addVertex(const std::string& id);
+        VertexInfos* addVertex(
+                const std::string& id, 
+                long long int deadline
+                );
         EdgeInfos* addEdge(
                 const std::string& n1,
                 const std::string& n2

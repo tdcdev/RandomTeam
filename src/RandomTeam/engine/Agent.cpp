@@ -46,6 +46,7 @@ Agent::Agent(const std::string& id):
     m_strength(-1),
     m_visRange(-1),
     m_zoneScore(-1),
+    m_enable(true),
     m_deadline(-1)
 {
     m_actions.push_back(
@@ -78,6 +79,11 @@ Agent::Agent(const std::string& id):
                 parryGenerator, parrySimulator, parryPerformer
                 )
             );
+    m_actions.push_back(
+            Action(
+                repairGenerator, repairSimulator, repairPerformer
+                )
+            );
 }
 
 
@@ -95,6 +101,7 @@ Agent::Agent(const Agent& agent):
     m_strength(agent.m_strength),
     m_visRange(agent.m_visRange),
     m_zoneScore(agent.m_zoneScore),
+    m_enable(agent.m_enable),
     m_deadline(agent.m_deadline),
     m_actions(agent.m_actions),
     m_playouts(agent.m_playouts)
@@ -118,6 +125,7 @@ Agent& Agent::operator=(const Agent& agent)
     m_strength = agent.m_strength;
     m_visRange = agent.m_visRange;
     m_zoneScore = agent.m_zoneScore;
+    m_enable = agent.m_enable;
     m_deadline = agent.m_deadline;
     m_actions = agent.m_actions;
     m_playouts = agent.m_playouts;
@@ -214,6 +222,13 @@ int Agent::visRange() const
 int Agent::zoneScore() const
 {
     return m_zoneScore;
+}
+
+
+
+bool Agent::isEnable() const
+{
+    return m_enable;
 }
 
 
@@ -343,6 +358,13 @@ void Agent::setVisRange(int visRange)
 void Agent::setZoneScore(int zoneScore)
 {
     m_zoneScore = zoneScore;
+}
+
+
+
+void Agent::setEnable(bool on)
+{
+    m_enable = on;
 }
 
 

@@ -1,4 +1,4 @@
-// RandomTeam - parry.cpp
+// RandomTeam - repair.cpp
 
 // Authors:
 
@@ -27,23 +27,19 @@
 
 
 
-#include <RandomTeam/actions/parry.hpp>
+#include <RandomTeam/actions/repair.hpp>
 #include <RandomTeam/graph/SimulationGraph.hpp>
 #include <RandomTeam/engine/Teammate.hpp>
 
 
 
-void parryGenerator(
+void repairGenerator(
         const Agent& agent,
         const SimulationGraph& graph,
         std::vector<std::string>& params
         )
 {
-    if (
-            agent.role() != Agent::Role::SENTINEL && 
-            agent.role() != Agent::Role::SABOTEUR && 
-            agent.role() != Agent::Role::REPAIRER
-            )
+    if (agent.role() != Agent::Role::REPAIRER)
     {
         return;
     }
@@ -69,21 +65,35 @@ void parryGenerator(
             it++
             )
         {
-            std::vector<const Agent*>::const_iterator opp;
+            std::vector<const Agent*>::const_iterator teammate;
 
             for (
-                    opp = (*it)->m_opponents.begin();
-                    opp != (*it)->m_opponents.end();
-                    opp++
+                    teammate = (*it)->m_teammates.begin();
+                    teammate != (*it)->m_teammates.end();
+                    teammate++
                 )
             {
-                const std::string pos = (*opp)->position();
+                const std::string pos = (*teammate)->position();
                 const EdgeInfos* edge = graph.edge(agent.position(), pos);
+
+                if ((*teammate)->id() == agent.id())
+                {
+                    continue;
+                }
+
+                if ((*teammate)->health() == (*teammate)->maxHealth())
+                {
+                    continue;
+                }
+
+                if (!(*teammate)->isEnable() && agent.energy() < 3)
+                {
+                    continue;
+                }
 
                 if (edge != nullptr || agent.position() == pos)
                 {
-                    params.push_back("");
-                    return;
+                    params.push_back((*teammate)->id());
                 }
             }
         }
@@ -92,27 +102,39 @@ void parryGenerator(
 
 
 
-bool parrySimulator(
+bool repairSimulator(
         const Agent& agent,
         const std::string& param,
         SimulationGraph& graph
         )
 {
     Agent* newAgent = graph.teammate(agent.id());
+    Agent* teammate = graph.teammate(param);
 
     if (newAgent == nullptr)
     {
         return false;
     }
 
-    newAgent->setHealth(newAgent->health() + 4);
+
+    if (teammate->isEnable())
+    {
+        newAgent->setEnergy(newAgent->energy() - 2);
+    }
+    else
+    {
+        newAgent->setEnergy(newAgent->energy() - 3);
+    }
+
+    teammate->setEnable(true);
+    teammate->setHealth(teammate->maxHealth());
 
     return true;
 }
 
 
 
-void parryPerformer(Teammate& teammate, const std::string& param)
+void repairPerformer(Teammate& teammate, const std::string& param)
 {
-    teammate.setActionOrder("parry", param);
+    teammate.setActionOrder("repair", param);
 }

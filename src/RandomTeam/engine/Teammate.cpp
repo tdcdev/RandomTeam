@@ -513,6 +513,15 @@ void Teammate::requestactionVisibleEntities(tinyxml2::XMLElement* perception)
                 agent.setPosition(values[2]);
                 agent.setDeadline(m_deadline);
 
+                if (values[3] == "normal")
+                {
+                    agent.setEnable(true);
+                }
+                else
+                {
+                    agent.setEnable(false);
+                }
+
                 m_world->seeAgent(agent);
             }
 

@@ -69,6 +69,7 @@ class Agent
         int strength() const;
         int visRange() const;
         int zoneScore() const;
+        bool isEnable() const;
         long long int deadline() const;
         int remainingTime() const;
         unsigned int nbPlayouts() const;
@@ -87,6 +88,7 @@ class Agent
         void setStrength(int strength);
         void setVisRange(int visRange);
         void setZoneScore(int zoneScore);
+        void setEnable(bool on);
         void setDeadline(long long int deadline);
         void generatePlayouts(const SimulationGraph& graph);
 
@@ -105,6 +107,7 @@ class Agent
         int m_strength;
         int m_visRange;
         int m_zoneScore;
+        bool m_enable;
         long long int m_deadline;
         ActionsVector m_actions;
         PlayoutsVector m_playouts;

@@ -1,4 +1,4 @@
-// RandomTeam - actions.hpp
+// RandomTeam - repair.hpp
 
 // Authors:
 
@@ -27,37 +27,33 @@
 
 
 
-#ifndef _ACTIONS_HPP_
-#define _ACTIONS_HPP_
+#ifndef _REPAIR_HPP_
+#define _REPAIR_HPP_
 
 
 
-#include <RandomTeam/graph/SimulationGraph.hpp>
-#include <RandomTeam/actions/recharge.hpp>
-#include <RandomTeam/actions/goto.hpp>
-#include <RandomTeam/actions/survey.hpp>
-#include <RandomTeam/actions/probe.hpp>
-#include <RandomTeam/actions/attack.hpp>
-#include <RandomTeam/actions/parry.hpp>
-#include <RandomTeam/actions/repair.hpp>
+#include <string>
+#include <vector>
 
 
 
-typedef void (*ActionGenerator)(
-        const Agent&,
-        const SimulationGraph&,
-        std::vector<std::string>&
+class Agent;
+class Teammate;
+class SimulationGraph;
+
+
+
+void repairGenerator(
+        const Agent& agent,
+        const SimulationGraph& graph,
+        std::vector<std::string>& params
         );
-typedef bool (*ActionSimulator)(
-        const Agent&,
-        const std::string&,
-        SimulationGraph&
+bool repairSimulator(
+        const Agent& agent,
+        const std::string& param,
+        SimulationGraph& graph
         );
-typedef void (*ActionPerformer)(Teammate&, const std::string&);
-typedef std::tuple<ActionGenerator, ActionSimulator, ActionPerformer> Action;
-typedef std::vector<Action> ActionsVector;
-typedef std::pair<Action, std::string> Playout;
-typedef std::vector<Playout> PlayoutsVector;
+void repairPerformer(Teammate& teammate, const std::string& param);
 
 
 

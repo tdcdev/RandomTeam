@@ -87,6 +87,48 @@ VertexInfos& VertexInfos::operator=(const VertexInfos& infos)
 
 
 
+std::vector<const Agent*> VertexInfos::enabledTeammates() const
+{
+    std::vector<const Agent*> teammates;
+
+    for (
+        std::vector<const Agent*>::const_iterator it = m_teammates.begin();
+        it != m_teammates.end();
+        it++
+        )
+    {
+        if ((*it)->isEnable())
+        {
+            teammates.push_back(*it);
+        }
+    }
+
+    return teammates;
+}
+
+
+
+std::vector<const Agent*> VertexInfos::enabledOpponents() const
+{
+    std::vector<const Agent*> opponents;
+
+    for (
+        std::vector<const Agent*>::const_iterator it = m_opponents.begin();
+        it != m_opponents.end();
+        it++
+        )
+    {
+        if ((*it)->isEnable())
+        {
+            opponents.push_back(*it);
+        }
+    }
+
+    return opponents;
+}
+
+
+
 void VertexInfos::clear()
 {
     long long int diff = m_deadline - Clock::now();

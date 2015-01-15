@@ -387,8 +387,8 @@ float SimulationGraph::teammatesFitness() const
         it++
         )
     {
-        energy += it->energy() / it->maxEnergy();
-        health += it->health() / it->maxHealth();
+        energy += (float)it->energy() / (float)it->maxEnergy();
+        health += (float)it->health() / (float)it->maxHealth();
     }
 
     return energy + health;
@@ -399,6 +399,7 @@ float SimulationGraph::teammatesFitness() const
 float SimulationGraph::opponentsFitness() const
 {
     float health = 0.f;
+    float inspect = 0.f;
 
     for (
         std::vector<Agent>::const_iterator it = m_opponents.begin();
@@ -406,10 +407,25 @@ float SimulationGraph::opponentsFitness() const
         it++
         )
     {
-        health += it->health() / it->maxHealth();
+        if (it->role() != Agent::Role::NONE)
+        {
+            inspect += 1.f;
+        }
+
+        if (it->maxHealth() < 0)
+        {
+            if (it->health() < -1)
+            {
+                health += 1.f;
+            }
+        }
+        else
+        {
+            health += 1.f - (float)it->health() / (float)it->maxHealth();
+        }
     }
 
-    return -health;
+    return health + inspect;
 }
 
 
@@ -426,20 +442,21 @@ float SimulationGraph::fitness() const
 
 float SimulationGraph::vertexScore(Vertex v) const
 {
-    const std::vector<const Agent*>& teammates(m_graph[v].m_teammates);
-    const std::vector<const Agent*>& opponents(m_graph[v].m_opponents);
+    std::vector<const Agent*> teammates(m_graph[v].enabledTeammates());
+    std::vector<const Agent*> opponents(m_graph[v].enabledOpponents());
     std::pair<BGraph::adjacency_iterator, BGraph::adjacency_iterator> it;
+    float value = m_graph[v].m_value > 0 ? m_graph[v].m_value : 1.f;
     int t = 0;
     int o = 0;
 
     if (teammates.size() > 0 && teammates.size() > opponents.size())
     {
-        return m_graph[v].m_value;
+        return value;
     }
 
     if (opponents.size() > 0 && opponents.size() > teammates.size())
     {
-        return -m_graph[v].m_value;
+        return -value;
     }
 
     it = boost::adjacent_vertices(v, m_graph);
@@ -447,8 +464,8 @@ float SimulationGraph::vertexScore(Vertex v) const
     while (it.first != it.second)
     {
         Vertex v2(*it.first);
-        const std::vector<const Agent*>& teammates(m_graph[v2].m_teammates);
-        const std::vector<const Agent*>& opponents(m_graph[v2].m_opponents);
+        std::vector<const Agent*> teammates(m_graph[v2].enabledTeammates());
+        std::vector<const Agent*> opponents(m_graph[v2].enabledOpponents());
 
         if (teammates.size() > 0 && teammates.size() > opponents.size())
         {
@@ -465,12 +482,12 @@ float SimulationGraph::vertexScore(Vertex v) const
 
     if (t > 2 && t > o)
     {
-        return m_graph[v].m_value;
+        return value;
     }
 
     if (o > 2 && o > t)
     {
-        return -m_graph[v].m_value;
+        return -value;
     }
 
     return 0.f;

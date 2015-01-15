@@ -67,6 +67,7 @@ class World
                 int maxSteps
                 );
         void endSimulation(const std::string& rank, const std::string& score);
+        void inspectAgent(const Agent& agent);
         void seeAgent(const Agent& agent);
         void addVertex(
                 const std::string& id,
@@ -95,6 +96,7 @@ class World
         SimulationGraph m_graph;
         std::vector<Teammate> m_teammates;
         std::vector<Agent> m_opponents;
+        std::vector<Agent> m_opponentsLU;
         bool m_running;
         bool m_started;
         std::string m_simulationId;

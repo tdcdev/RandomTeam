@@ -84,6 +84,11 @@ Agent::Agent(const std::string& id):
                 repairGenerator, repairSimulator, repairPerformer
                 )
             );
+    m_actions.push_back(
+            Action(
+                inspectGenerator, inspectSimulator, inspectPerformer
+                )
+            );
 }
 
 

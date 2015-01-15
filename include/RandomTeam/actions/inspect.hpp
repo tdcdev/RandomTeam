@@ -1,4 +1,4 @@
-// RandomTeam - VertexInfos.hpp
+// RandomTeam - inspect.hpp
 
 // Authors:
 
@@ -27,8 +27,8 @@
 
 
 
-#ifndef _VERTEX_INFOS_HPP_
-#define _VERTEX_INFOS_HPP_
+#ifndef _INSPECT_HPP_
+#define _INSPECT_HPP_
 
 
 
@@ -39,31 +39,21 @@
 
 class Agent;
 class Teammate;
+class SimulationGraph;
 
 
 
-class VertexInfos
-{
-
-    public:
-
-        VertexInfos();
-        VertexInfos(const std::string& id);
-        VertexInfos(const VertexInfos& infos);
-        VertexInfos& operator=(const VertexInfos& infos);
-        std::vector<const Agent*> enabledTeammates() const;
-        std::vector<const Agent*> enabledOpponents() const;
-        void clear();
-
-        std::vector<const Agent*> m_teammates;
-        std::vector<const Agent*> m_opponents;
-        std::string m_id;
-        int m_value;
-        std::string m_team;
-        bool m_visited;
-        long long int m_deadline;
-
-};
+void inspectGenerator(
+        const Agent& agent,
+        const SimulationGraph& graph,
+        std::vector<std::string>& params
+        );
+bool inspectSimulator(
+        const Agent& agent,
+        const std::string& param,
+        SimulationGraph& graph
+        );
+void inspectPerformer(Teammate& teammate, const std::string& param);
 
 
 

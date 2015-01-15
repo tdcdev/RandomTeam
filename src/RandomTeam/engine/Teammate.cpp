@@ -347,7 +347,7 @@ void Teammate::bye(tinyxml2::XMLElement* message)
 
 void Teammate::requestaction(tinyxml2::XMLElement* message)
 {
-    debug("Agent " + m_id + ": read request-action message");
+    debug("Agent " + m_id + "(" + std::to_string(m_role) + "): read request-action message");
 
     tinyxml2::XMLElement* perception;
 
@@ -584,5 +584,72 @@ void Teammate::requestactionSurveyedEdges(tinyxml2::XMLElement* perception)
 
 void Teammate::requestactionInspectedEntities(tinyxml2::XMLElement* perception)
 {
-    /* TODO */
+    tinyxml2::XMLElement* entities;
+
+    if (getXMLElement(perception, "inspectedEntities", &entities, false))
+    {
+        tinyxml2::XMLElement* e = entities->FirstChildElement("inspectedEntity");
+
+        while (e)
+        {
+            std::vector<std::string> attributes = {
+                "name",
+                "team",
+                "role",
+                "node",
+                "energy",
+                "health",
+                "maxEnergy",
+                "maxHealth",
+                "strength",
+                "visRange"
+            };
+            std::vector<std::string> values;
+
+            if (getXMLAttributes(e, attributes, values))
+            {
+                Agent agent(values[0]);
+
+                agent.setTeam(values[1]);
+                agent.setPosition(values[3]);
+                agent.setEnergy(std::stoi(values[4]));
+                agent.setHealth(std::stoi(values[5]));
+                agent.setMaxEnergy(std::stoi(values[6]));
+                agent.setMaxHealth(std::stoi(values[7]));
+                agent.setStrength(std::stoi(values[8]));
+                agent.setVisRange(std::stoi(values[9]));
+                agent.setDeadline(m_deadline);
+
+                if (values[2] == "Explorer")
+                {
+                    agent.setRole(Role::EXPLORER);
+                }
+                else if (values[2] == "Repairer")
+                {
+                    agent.setRole(Role::REPAIRER);
+                }
+                else if (values[2] == "Saboteur")
+                {
+                    agent.setRole(Role::SABOTEUR);
+                }
+                else if (values[2] == "Sentinel")
+                {
+                    agent.setRole(Role::SENTINEL);
+                }
+                else if (values[2] == "Inspector")
+                {
+                    agent.setRole(Role::INSPECTOR);
+                }
+                else
+                {
+                    agent.setRole(Role::NONE);
+                    error("Unknown role: " + values[4]);
+                }
+
+                m_world->inspectAgent(agent);
+            }
+
+            e = e->NextSiblingElement("visibleEntity");
+        }
+    }
 }

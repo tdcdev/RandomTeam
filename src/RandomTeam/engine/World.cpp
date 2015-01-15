@@ -242,6 +242,26 @@ void World::endSimulation(const std::string& rank, const std::string& score)
 
 
 
+void World::inspectAgent(const Agent& agent)
+{
+    for (
+        std::vector<Agent>::iterator opponent = m_opponentsLU.begin();
+        opponent != m_opponentsLU.end();
+        opponent++
+        )
+    {
+        if (opponent->id() == agent.id())
+        {
+            *opponent = agent;
+            return;
+        }
+    }
+
+    m_opponentsLU.push_back(agent);
+}
+
+
+
 void World::seeAgent(const Agent& agent)
 {
     if (m_team == agent.team())
@@ -270,6 +290,20 @@ void World::seeAgent(const Agent& agent)
     {
         if (opponent->id() == agent.id())
         {
+            return;
+        }
+    }
+
+    for (
+            std::vector<Agent>::const_iterator opponent = m_opponentsLU.begin();
+            opponent != m_opponentsLU.end();
+            opponent++
+        )
+    {
+        if (opponent->id() == agent.id())
+        {
+            m_opponents.push_back(*opponent);
+            m_opponents.back().setDeadline(agent.deadline());
             return;
         }
     }

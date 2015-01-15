@@ -40,6 +40,7 @@
 #include <RandomTeam/actions/attack.hpp>
 #include <RandomTeam/actions/parry.hpp>
 #include <RandomTeam/actions/repair.hpp>
+#include <RandomTeam/actions/inspect.hpp>
 
 
 

@@ -214,6 +214,9 @@ void World::startSimulation(
         m_maxVertices = maxVertices;
         m_maxSteps = maxSteps;
 
+        m_opponents.clear();
+        m_opponentsLU.clear();
+
         infostr += "Simulation " + m_simulationId + " started with ";
         infostr += "maxEdges = " + std::to_string(m_maxEdges) + " ";
         infostr += "maxVertices = " + std::to_string(m_maxVertices) + " ";
@@ -239,6 +242,9 @@ void World::endSimulation(const std::string& rank, const std::string& score)
         m_maxSteps = -1;
         m_step = -1;
         m_team = "none";
+
+        m_opponents.clear();
+        m_opponentsLU.clear();
     }
 }
 
@@ -419,6 +425,11 @@ void World::clear()
 
 void World::generateAllPlayouts()
 {
+    if (!m_started)
+    {
+        return;
+    }
+
     m_graph.setAgents(m_teammates, m_opponents);
     m_solution.clear();
     m_fitness = std::numeric_limits<float>::min();
@@ -493,6 +504,11 @@ void World::think(unsigned int nbThreads)
 
     rand = dist(s_randGen);
 
+    if (nb <= 0)
+    {
+        return;
+    }
+
     for (unsigned int i = 0; i < nbThreads; i++)
     {
         solutions[i][index] += rand + i;
@@ -560,8 +576,11 @@ void World::randomThink()
         unsigned int nb = teammate->nbPlayouts();
         std::uniform_int_distribution<int> dist(0, nb - 1);
 
-        m_solution[n] += dist(s_randGen);
-        m_solution[n] %= nb;
+        if (nb > 0)
+        {
+            m_solution[n] += dist(s_randGen);
+            m_solution[n] %= nb;
+        }
     }
 
     std::thread thread(

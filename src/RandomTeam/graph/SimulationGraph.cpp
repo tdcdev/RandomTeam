@@ -44,6 +44,8 @@ SimulationGraph::SimulationGraph(const SimulationGraph& sg):
     m_teammates(sg.m_teammates),
     m_opponents(sg.m_opponents)
 {
+    m_vertices.clear();
+
     for (
             VerticesIterator it = boost::vertices(m_graph);
             it.first != it.second;
@@ -65,6 +67,7 @@ SimulationGraph& SimulationGraph::operator=(const SimulationGraph& sg)
     m_graph = sg.m_graph;
     m_teammates = sg.m_teammates;
     m_opponents = sg.m_opponents;
+    m_vertices.clear();
 
     for (
             VerticesIterator it = boost::vertices(m_graph);
@@ -458,9 +461,12 @@ float SimulationGraph::positionFitness() const
                 t++
                 )
             {
-                if ((*t)->role() == Agent::Role::REPAIRER)
+                if ((*t)->id() != it->id())
                 {
-                    pos += 1.f;
+                    if ((*t)->role() == Agent::Role::REPAIRER)
+                    {
+                        pos += 1.f;
+                    }
                 }
             }
         }

@@ -80,6 +80,7 @@ class Teammate: public Agent
         void bye(tinyxml2::XMLElement* message);
         void requestaction(tinyxml2::XMLElement* message);
         void requestactionSimulation(tinyxml2::XMLElement* perception);
+        void requestactionTeam(tinyxml2::XMLElement* perception);
         void requestactionSelf(tinyxml2::XMLElement* perception);
         void requestactionVisibleVertices(tinyxml2::XMLElement* perception);
         void requestactionVisibleEdges(tinyxml2::XMLElement* perception);

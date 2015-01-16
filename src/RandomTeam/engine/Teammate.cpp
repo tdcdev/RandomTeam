@@ -363,6 +363,7 @@ void Teammate::requestaction(tinyxml2::XMLElement* message)
         }
 
         this->requestactionSimulation(perception);
+        this->requestactionTeam(perception);
         this->requestactionSelf(perception);
         this->requestactionVisibleVertices(perception);
         this->requestactionVisibleEdges(perception);
@@ -387,6 +388,29 @@ void Teammate::requestactionSimulation(tinyxml2::XMLElement* perception)
         if (getXMLAttributes(simulation, attributes, values))
         {
             m_world->setStep(std::stoi(values[0]));
+        }
+    }
+}
+
+
+
+void Teammate::requestactionTeam(tinyxml2::XMLElement* perception)
+{
+    tinyxml2::XMLElement* team;
+
+    if (getXMLElement(perception, "team", &team))
+    {
+        std::vector<std::string> attributes = {
+            "lastStepScore",
+            "money",
+            "score",
+            "zonesScore"
+        };
+        std::vector<std::string> values;
+
+        if (getXMLAttributes(team, attributes, values))
+        {
+            std::stoi(values[1]);
         }
     }
 }

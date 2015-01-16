@@ -82,14 +82,8 @@ class World
         void generateAllPlayouts();
         void thinkThread(const std::vector<int>& solution, float& score) const;
         void think(unsigned int nbThreads);
+        void randomThink();
         void perform();
-        static void mutate(
-                const std::vector<int>& solution,
-                const std::vector<Teammate>& teammates,
-                unsigned int index,
-                unsigned int factor,
-                std::vector<int>& mutate
-                );
 
     private:
 

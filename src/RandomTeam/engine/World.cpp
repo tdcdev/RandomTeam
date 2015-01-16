@@ -30,6 +30,7 @@
 #include <RandomTeam/engine/World.hpp>
 #include <RandomTeam/engine/Clock.hpp>
 #include <RandomTeam/RandomTeam/tools.hpp>
+#include <chrono>
 #include <thread>
 
 
@@ -486,7 +487,7 @@ void World::think(unsigned int nbThreads)
     unsigned int index = m_currentIt % m_teammates.size();
     unsigned int nb = m_teammates[index].nbPlayouts();
     unsigned int rand = 0;
-    std::uniform_int_distribution<int> dist(0, nb - 1);
+    std::uniform_int_distribution<int> dist(1, nb - 1);
 
     threads.assign(nbThreads, nullptr);
 
@@ -529,6 +530,61 @@ void World::think(unsigned int nbThreads)
 
 
 
+void World::randomThink()
+{
+    if (!m_started)
+    {
+        return;
+    }
+
+    if (m_teammates.size() != m_solution.size())
+    {
+        error("number of teammates != solution size");
+        return;
+    }
+
+    if (m_currentIt > 0)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        return;
+    }
+
+    unsigned int n = 0;
+
+    for (
+        std::vector<Teammate>::const_iterator teammate = m_teammates.begin();
+        teammate != m_teammates.end();
+        teammate++, n++
+        )
+    {
+        unsigned int nb = teammate->nbPlayouts();
+        std::uniform_int_distribution<int> dist(0, nb - 1);
+
+        m_solution[n] += dist(s_randGen);
+        m_solution[n] %= nb;
+    }
+
+    std::thread thread(
+            &World::thinkThread,
+            this,
+            std::ref(m_solution),
+            std::ref(m_fitness)
+            );
+
+    thread.join();
+
+    debug(
+            "Solution upgraded (" + 
+            std::to_string(m_currentIt) + 
+            "): " + 
+            std::to_string(m_fitness)
+         );
+
+    m_currentIt++;
+}
+
+
+
 void World::perform()
 {
     if (m_teammates.size() != m_solution.size())
@@ -551,18 +607,4 @@ void World::perform()
             it->performPlayout(*n);
         }
     }
-}
-
-
-
-void World::mutate(
-        const std::vector<int>& solution,
-        const std::vector<Teammate>& teammates,
-        unsigned int index,
-        unsigned int factor,
-        std::vector<int>& mutate
-        )
-{
-
-
 }

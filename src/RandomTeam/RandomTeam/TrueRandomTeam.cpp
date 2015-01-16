@@ -5,7 +5,7 @@
 //     Thomas Da Costa <tdc.input@gmail.com>
 //     Pierre Luce-Vayrac <p.luce.vayrac@gmail.com>
 
-// Copyright (C) 2014 Thomas Da Costa and Piere Luce-Vayrac
+// Copyright (C) 2014-2015 Thomas Da Costa and Pierre Luce-Vayrac
 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),

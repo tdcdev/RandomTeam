@@ -1,4 +1,4 @@
-// RandomTeam - main.cpp
+// RandomTeam - RandomTeam.cpp
 
 // Authors:
 
@@ -68,7 +68,7 @@ boost::program_options::options_description createOptionsDescription()
         )
         (
          "threads",
-         bpo::value<unsigned int>(&g_threads)->default_value(2),
+         bpo::value<unsigned int>(&g_threads)->default_value(4),
          "number of threads used"
         )
         (

@@ -86,6 +86,8 @@ class World
         static void mutate(
                 const std::vector<int>& solution,
                 const std::vector<Teammate>& teammates,
+                unsigned int index,
+                unsigned int factor,
                 std::vector<int>& mutate
                 );
 
@@ -107,6 +109,7 @@ class World
         std::string m_team;
         std::vector<int> m_solution;
         float m_fitness;
+        unsigned int m_currentIt;
 
 };
 

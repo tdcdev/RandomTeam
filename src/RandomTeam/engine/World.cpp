@@ -47,7 +47,8 @@ World::World():
     m_maxVertices(-1),
     m_maxSteps(-1),
     m_step(-1),
-    m_team("none")
+    m_team("none"),
+    m_currentIt(0)
 {
 
 }
@@ -420,6 +421,7 @@ void World::generateAllPlayouts()
     m_graph.setAgents(m_teammates, m_opponents);
     m_solution.clear();
     m_fitness = std::numeric_limits<float>::min();
+    m_currentIt = 0;
 
     for (
             std::vector<Teammate>::iterator it = m_teammates.begin();
@@ -479,14 +481,21 @@ void World::think(unsigned int nbThreads)
     }
 
     std::vector< std::shared_ptr<std::thread> > threads;
-    std::vector< std::vector<int> > solutions(nbThreads);
+    std::vector< std::vector<int> > solutions(nbThreads, m_solution);
     std::vector<float> scores(nbThreads);
+    unsigned int index = m_currentIt % m_teammates.size();
+    unsigned int nb = m_teammates[index].nbPlayouts();
+    unsigned int rand = 0;
+    std::uniform_int_distribution<int> dist(0, nb - 1);
 
     threads.assign(nbThreads, nullptr);
 
+    rand = dist(s_randGen);
+
     for (unsigned int i = 0; i < nbThreads; i++)
     {
-        World::mutate(m_solution, m_teammates, solutions[i]);
+        solutions[i][index] += rand + i;
+        solutions[i][index] %= nb;
 
         threads[i].reset(
                 new std::thread(
@@ -506,9 +515,16 @@ void World::think(unsigned int nbThreads)
         {
             m_fitness = scores[i];
             m_solution = solutions[i];
-            debug("Solution upgraded: " + std::to_string(m_fitness));
+            debug(
+                    "Solution upgraded (" + 
+                    std::to_string(m_currentIt) + 
+                    "): " + 
+                    std::to_string(m_fitness)
+                    );
         }
     }
+
+    m_currentIt++;
 }
 
 
@@ -542,33 +558,11 @@ void World::perform()
 void World::mutate(
         const std::vector<int>& solution,
         const std::vector<Teammate>& teammates,
+        unsigned int index,
+        unsigned int factor,
         std::vector<int>& mutate
         )
 {
-    mutate.clear();
 
-    for (
-            std::vector<Teammate>::const_iterator it = teammates.begin();
-            it != teammates.end();
-            it++
-        )
-    {
-        unsigned int nb = it->nbPlayouts();
-        int rand = -1;
 
-        if (nb > 0)
-        {
-            std::uniform_int_distribution<int> dist(-1, 1);
-            rand += dist(s_randGen);
-
-            while (rand < 0)
-            {
-                rand += nb;
-            }
-
-            rand %= nb;
-        }
-
-        mutate.push_back(rand);
-    }
 }

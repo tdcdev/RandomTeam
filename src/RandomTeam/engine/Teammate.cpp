@@ -347,7 +347,7 @@ void Teammate::bye(tinyxml2::XMLElement* message)
 
 void Teammate::requestaction(tinyxml2::XMLElement* message)
 {
-    debug("Agent " + m_id + "(" + std::to_string(m_role) + "): read request-action message");
+    // debug("Agent " + m_id + ": read request-action message");
 
     tinyxml2::XMLElement* perception;
 

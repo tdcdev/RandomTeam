@@ -92,7 +92,6 @@ class Agent
         void setDeadline(long long int deadline);
         void generatePlayouts(const SimulationGraph& graph);
 
-
     protected:
 
         std::string m_id;

@@ -39,7 +39,7 @@ void surveyGenerator(
         std::vector<std::string>& params
         )
 {
-    if (agent.energy() < 1)
+    if (agent.energy() < 1 || agent.health() < 1 || !agent.isEnable())
     {
         return;
     }

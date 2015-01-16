@@ -427,6 +427,15 @@ void Teammate::requestactionSelf(tinyxml2::XMLElement* perception)
             m_visRange = std::stoi(values[10]);
             m_zoneScore = std::stoi(values[11]);
 
+            if (m_health > 0)
+            {
+                m_enable = true;
+            }
+            else
+            {
+                m_enable = false;
+            }
+
             std::string debugstr;
             debugstr += "Agent " + m_id + ": last ";
             debugstr += values[0] + "(" + values[1] + ") " + values[2];

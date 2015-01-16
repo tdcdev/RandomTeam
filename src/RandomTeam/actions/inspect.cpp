@@ -44,7 +44,7 @@ void inspectGenerator(
         return;
     }
 
-    if (agent.energy() < 2)
+    if (agent.energy() < 2 || agent.health() < 1 || !agent.isEnable())
     {
         return;
     }

@@ -430,12 +430,83 @@ float SimulationGraph::opponentsFitness() const
 
 
 
+float SimulationGraph::positionFitness() const
+{
+    float pos = 0.f;
+
+    for (
+        std::vector<Agent>::const_iterator it = m_teammates.begin();
+        it != m_teammates.end();
+        it++
+        )
+    {
+        const VertexInfos* v(this->vertex(it->position()));
+
+        if (v == nullptr)
+        {
+            return pos;
+        }
+
+        std::vector<const Agent*> teammates(v->m_teammates);
+        std::vector<const Agent*> opponents(v->m_opponents);
+
+        if (!it->isEnable() || it->health() != it->maxHealth())
+        {
+            for (
+                std::vector<const Agent*>::const_iterator t = teammates.begin();
+                t != teammates.end();
+                t++
+                )
+            {
+                if ((*t)->role() == Agent::Role::REPAIRER)
+                {
+                    pos += 1.f;
+                }
+            }
+        }
+
+        if (it->role() == Agent::Role::SABOTEUR)
+        {
+            for (
+                std::vector<const Agent*>::const_iterator o = opponents.begin();
+                o != opponents.end();
+                o++
+                )
+            {
+                if ((*o)->isEnable())
+                {
+                    pos += 1.f;
+                }
+            }
+        }
+        else if (it->role() == Agent::Role::INSPECTOR)
+        {
+            for (
+                std::vector<const Agent*>::const_iterator o = opponents.begin();
+                o != opponents.end();
+                o++
+                )
+            {
+                if ((*o)->role() == Agent::Role::NONE)
+                {
+                    pos += 1.f;
+                }
+            }
+        }
+    }
+
+    return pos;
+}
+
+
+
 float SimulationGraph::fitness() const
 {
     return
         this->graphFitness() +
         this->teammatesFitness() +
-        this->opponentsFitness();
+        this->opponentsFitness() +
+        this->positionFitness();
 }
 
 

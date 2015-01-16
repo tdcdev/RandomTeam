@@ -84,6 +84,7 @@ class SimulationGraph
         float graphFitness() const;
         float teammatesFitness() const;
         float opponentsFitness() const;
+        float positionFitness() const;
         float fitness() const;
 
     private:

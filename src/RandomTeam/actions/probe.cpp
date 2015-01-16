@@ -39,7 +39,12 @@ void probeGenerator(
         std::vector<std::string>& params
         )
 {
-    if (agent.energy() < 1 || agent.role() != Agent::Role::EXPLORER)
+    if (agent.role() != Agent::Role::EXPLORER)
+    {
+        return;
+    }
+
+    if (agent.energy() < 1 || agent.health() < 1 || !agent.isEnable())
     {
         return;
     }

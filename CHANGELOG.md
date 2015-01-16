@@ -1,5 +1,14 @@
-0.3 (unreleased)
+0.4 (unreleased)
 ----------------
+
+0.3 (2015-01-16)
+----------------
+
+Features:
+
+- smarter decision algorithm
+- position evaluation
+- agent actions: inspect
 
 0.2 (2015-01-14)
 ----------------

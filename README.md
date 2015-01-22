@@ -19,8 +19,8 @@ To download this repository use this command line:
 
     git clone --recursive https://github.com/tdcdev/RandomTeam
 
-In order to compile you need cmake 2.8.9 or greater and Boost 1.55. Use the
-following commands in order to compile:
+In order to compile you need g++ 4.8 or greater, cmake 2.8.9 or greater and
+Boost 1.55. Use the following commands in order to compile:
 
     mkdir build
     cd build

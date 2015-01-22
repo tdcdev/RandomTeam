@@ -39,7 +39,7 @@
 
 ServerInterface::ServerInterface(
         World& world,
-        std::string host,
+        const std::string& host,
         unsigned int port
         ):
     m_world(world),

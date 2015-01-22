@@ -34,6 +34,7 @@
 
 #include <memory>
 #include <vector>
+#include <string>
 
 
 
@@ -49,7 +50,7 @@ class ServerInterface
 
         ServerInterface(
                 World& world,
-                std::string host,
+                const std::string& host,
                 unsigned int port
                 );
         virtual ~ServerInterface();

@@ -291,6 +291,22 @@ void World::seeAgent(const Agent& agent)
     }
 
     for (
+            std::vector<Agent>::iterator opponent = m_opponentsLU.begin();
+            opponent != m_opponentsLU.end();
+            opponent++
+        )
+    {
+        if (opponent->id() == agent.id())
+        {
+            opponent->setPosition(agent.position());
+            opponent->setEnable(agent.isEnable());
+            opponent->setDeadline(agent.deadline());
+            m_opponents.push_back(*opponent);
+            return;
+        }
+    }
+
+    for (
         std::vector<Agent>::iterator opponent = m_opponents.begin();
         opponent != m_opponents.end();
         opponent++
@@ -302,19 +318,6 @@ void World::seeAgent(const Agent& agent)
         }
     }
 
-    for (
-            std::vector<Agent>::const_iterator opponent = m_opponentsLU.begin();
-            opponent != m_opponentsLU.end();
-            opponent++
-        )
-    {
-        if (opponent->id() == agent.id())
-        {
-            m_opponents.push_back(*opponent);
-            m_opponents.back().setDeadline(agent.deadline());
-            return;
-        }
-    }
 
     m_opponents.push_back(agent);
 }
